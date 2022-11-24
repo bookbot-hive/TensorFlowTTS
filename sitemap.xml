@@ -11,6 +11,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/models/english/</loc>
+         <lastmod>2022-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/models/indonesian/</loc>
+         <lastmod>2022-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/recipes/lightspeech-mbmelgan/dataset/</loc>
          <lastmod>2022-11-24</lastmod>
          <changefreq>daily</changefreq>
