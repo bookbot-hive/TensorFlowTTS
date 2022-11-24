@@ -367,8 +367,11 @@
 <a href="#__codelineno-4-10" id="__codelineno-4-10" name="__codelineno-4-10"></a>├── events.out.tfevents.1669084428.bookbot-tf-2.10561.0.v2
 <a href="#__codelineno-4-11" id="__codelineno-4-11" name="__codelineno-4-11"></a>└── predictions/ <span class="c1"># (3)</span>
 <a href="#__codelineno-4-12" id="__codelineno-4-12" name="__codelineno-4-12"></a>    ├── 100000steps/
-<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a>    ├── 10000steps/
-<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a>    ├── ...
+<a href="#__codelineno-4-13" id="__codelineno-4-13" name="__codelineno-4-13"></a>    │   ├── b<span class="s1">'en-US-Madison_11'</span>.png
+<a href="#__codelineno-4-14" id="__codelineno-4-14" name="__codelineno-4-14"></a>    │   ├── ...
+<a href="#__codelineno-4-15" id="__codelineno-4-15" name="__codelineno-4-15"></a>    ├── 10000steps/
+<a href="#__codelineno-4-16" id="__codelineno-4-16" name="__codelineno-4-16"></a>    │   ├── ...
+<a href="#__codelineno-4-17" id="__codelineno-4-17" name="__codelineno-4-17"></a>    ├── ...
 </code></pre></div>
 <ol>
 <li>This contains all of the training checkpoints.</li>
@@ -422,6 +425,41 @@
 <a href="#__codelineno-7-18" id="__codelineno-7-18" name="__codelineno-7-18"></a>  --resume ./mb-melgan-hifi-en-bookbot/checkpoints/ckpt-200000
 </code></pre></div>
 <p>Note that this first pre-trains only the generator for 200,000 steps, and then continues the remaining steps with the usual GAN training framework.</p>
+<p>At the end of training, we should end up with the following files</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a>mb-melgan-hifi-en-bookbot/
+<a href="#__codelineno-8-2" id="__codelineno-8-2" name="__codelineno-8-2"></a>├── checkpoints/ <span class="c1"># (1)</span>
+<a href="#__codelineno-8-3" id="__codelineno-8-3" name="__codelineno-8-3"></a>│   ├── checkpoint
+<a href="#__codelineno-8-4" id="__codelineno-8-4" name="__codelineno-8-4"></a>│   ├── ckpt-100000.data-00000-of-00001
+<a href="#__codelineno-8-5" id="__codelineno-8-5" name="__codelineno-8-5"></a>│   ├── ckpt-100000.index
+<a href="#__codelineno-8-6" id="__codelineno-8-6" name="__codelineno-8-6"></a>│   ├── ...
+<a href="#__codelineno-8-7" id="__codelineno-8-7" name="__codelineno-8-7"></a>│   ├── discriminator-100000.h5
+<a href="#__codelineno-8-8" id="__codelineno-8-8" name="__codelineno-8-8"></a>│   ├── discriminator-120000.h5
+<a href="#__codelineno-8-9" id="__codelineno-8-9" name="__codelineno-8-9"></a>│   ├── ...
+<a href="#__codelineno-8-10" id="__codelineno-8-10" name="__codelineno-8-10"></a>│   ├── generator-100000.h5
+<a href="#__codelineno-8-11" id="__codelineno-8-11" name="__codelineno-8-11"></a>│   ├── ...
+<a href="#__codelineno-8-12" id="__codelineno-8-12" name="__codelineno-8-12"></a>│   └── generator-1000000.h5 <span class="c1"># (2)</span>
+<a href="#__codelineno-8-13" id="__codelineno-8-13" name="__codelineno-8-13"></a>├── config.yml
+<a href="#__codelineno-8-14" id="__codelineno-8-14" name="__codelineno-8-14"></a>├── events.out.tfevents.1669101534.bookbot-tf-2.21897.0.v2
+<a href="#__codelineno-8-15" id="__codelineno-8-15" name="__codelineno-8-15"></a>├── events.out.tfevents.1669116847.bookbot-tf-2.31894.0.v2
+<a href="#__codelineno-8-16" id="__codelineno-8-16" name="__codelineno-8-16"></a>└── predictions/ <span class="c1"># (3)</span>
+<a href="#__codelineno-8-17" id="__codelineno-8-17" name="__codelineno-8-17"></a>    ├── 100000steps/
+<a href="#__codelineno-8-18" id="__codelineno-8-18" name="__codelineno-8-18"></a>    │   ├── b<span class="s1">'en-US-Madison_11'</span>.png
+<a href="#__codelineno-8-19" id="__codelineno-8-19" name="__codelineno-8-19"></a>    │   ├── b<span class="s1">'en-US-Madison_11'</span>_gen.wav
+<a href="#__codelineno-8-20" id="__codelineno-8-20" name="__codelineno-8-20"></a>    │   ├── b<span class="s1">'en-US-Madison_11'</span>_ref.wav
+<a href="#__codelineno-8-21" id="__codelineno-8-21" name="__codelineno-8-21"></a>    │   ├── ...
+<a href="#__codelineno-8-22" id="__codelineno-8-22" name="__codelineno-8-22"></a>    ├── 10000steps/
+<a href="#__codelineno-8-23" id="__codelineno-8-23" name="__codelineno-8-23"></a>    │   ├── ...
+<a href="#__codelineno-8-24" id="__codelineno-8-24" name="__codelineno-8-24"></a>    ├── ...
+</code></pre></div>
+<ol>
+<li>This contains all of the training checkpoints.</li>
+<li>The final generator checkpoint (which we want).</li>
+<li>This contains all mid-training intermediate predictions (waveforms).</li>
+</ol>
+<p>We can simply copy the final generator model into the output model directory.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="nb">cd</span> mb-melgan-hifi-en-bookbot
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>cp checkpoints/generator-1000000.h5 model.h5
+</code></pre></div>
 <p>With that, we are done!</p>
 </article>
 </div>
