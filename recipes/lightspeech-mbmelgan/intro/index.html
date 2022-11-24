@@ -272,15 +272,15 @@
 <p>For English, we use <a href="https://github.com/rhasspy/gruut">gruut</a> and for Indonesian, we use <a href="https://github.com/bookbot-kids/g2p_id">g2p_id</a>. To add support for other languages, you would need a grapheme-to-phoneme converter for that language, and support it as a processor in TensorFlowTTS. We will introduce a separate tutorial for that in the future.</p>
 <h2 id="lightspeech">LightSpeech</h2>
 <p>LightSpeech follows the same architecture as <a href="https://arxiv.org/abs/2006.04558">FastSpeech2</a>, except with an optimized model configuration obtained via Neural Architecture Search (NAS). In our case, we don't really perform NAS, but use the previously found best model configuration.</p>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/assets/fastspeech2.png"><img alt="FastSpeech2" loading="lazy" src="/assets/fastspeech2.png"/></a></p>
+<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../assets/fastspeech2.png"><img alt="FastSpeech2" loading="lazy" src="../../../assets/fastspeech2.png"/></a></p>
 <h2 id="multi-band-melgan">Multi-band MelGAN</h2>
 <p>Multi-Band MelGAN is an improvement upon <a href="https://arxiv.org/abs/1910.06711">MelGAN</a> that does waveform generation and waveform discrimination on a multi-band basis.</p>
 <figure>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/assets/mb-melgan.png"><img alt="MB-MelGAN" loading="lazy" src="/assets/mb-melgan.png" width="500"/></a></p>
+<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../assets/mb-melgan.png"><img alt="MB-MelGAN" loading="lazy" src="../../../assets/mb-melgan.png" width="500"/></a></p>
 </figure>
 <h2 id="hifi-gan-discrminator">HiFi-GAN Discrminator</h2>
 <p>Further, instead of using the original discriminator, we can use the discriminator presented in the HiFi-GAN paper.</p>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/assets/hifigan-discriminator.png"><img alt="HiFi-GAN-Discriminator" loading="lazy" src="/assets/hifigan-discriminator.png"/></a></p>
+<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../assets/hifigan-discriminator.png"><img alt="HiFi-GAN-Discriminator" loading="lazy" src="../../../assets/hifigan-discriminator.png"/></a></p>
 <p>We specifically use the multi-period discriminator (MPD) on the right.</p>
 </article>
 </div>
