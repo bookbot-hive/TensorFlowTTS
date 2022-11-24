@@ -7,7 +7,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.4.2, mkdocs-material-8.5.10" name="generator"/>
-<title>Introduction - Text-to-Speech with TensorFlowTTS</title>
+<title>Dataset - Text-to-Speech with TensorFlowTTS</title>
 <link href="../../../assets/stylesheets/main.472b142f.min.css" rel="stylesheet"/>
 <link href="../../../assets/stylesheets/palette.08040f6c.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -32,7 +32,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#introduction">
+<a class="md-skip" href="#dataset">
           Skip to content
         </a>
 </div>
@@ -56,7 +56,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Introduction
+              Dataset
             
           </span>
 </div>
@@ -172,14 +172,19 @@
           LightSpeech &amp; Multi-band MelGAN
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../intro/">
+        Introduction
+      </a>
+</li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
-          Introduction
+          Dataset
           <span class="md-nav__icon md-icon"></span>
 </label>
 <a class="md-nav__link md-nav__link--active" href="./">
-        Introduction
+        Dataset
       </a>
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
@@ -188,27 +193,26 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#lightspeech">
-    LightSpeech
+<a class="md-nav__link" href="#folder-structure">
+    Folder Structure
   </a>
-</li>
+<nav aria-label="Folder Structure" class="md-nav">
+<ul class="md-nav__list">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#multi-band-melgan">
-    Multi-band MelGAN
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#hifi-gan-discrminator">
-    HiFi-GAN Discrminator
+<a class="md-nav__link" href="#example">
+    Example
   </a>
 </li>
 </ul>
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../dataset/">
-        Dataset
-      </a>
+<a class="md-nav__link" href="#lexicon">
+    Lexicon
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="../duration-extraction/">
@@ -241,18 +245,22 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#lightspeech">
-    LightSpeech
+<a class="md-nav__link" href="#folder-structure">
+    Folder Structure
+  </a>
+<nav aria-label="Folder Structure" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#example">
+    Example
   </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#multi-band-melgan">
-    Multi-band MelGAN
-  </a>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#hifi-gan-discrminator">
-    HiFi-GAN Discrminator
+<a class="md-nav__link" href="#lexicon">
+    Lexicon
   </a>
 </li>
 </ul>
@@ -262,32 +270,100 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/w11wo/TensorFlowTTS/edit/master/docs/recipes/lightspeech-mbmelgan/intro.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/w11wo/TensorFlowTTS/edit/master/docs/recipes/lightspeech-mbmelgan/dataset.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="introduction">Introduction</h1>
-<p>This guide will explain how to train a <a href="https://arxiv.org/abs/2102.04040">LightSpeech</a> acoustic model and a <a href="https://arxiv.org/abs/2005.05106">Multi-band MelGAN</a> vocoder model (with a <a href="https://arxiv.org/abs/2010.05646">HiFi-GAN</a> Discriminator). In particular, we will be training a 44.1 kHz model, with a hop size of 512.</p>
-<p>This guide expects you to train an IPA-based model. For now, this tutorial only supports English and Indonesian -- because only these two languages have its correponding IPA-based grapheme-to-phoneme processor added to the custom fork. </p>
-<p>For English, we use <a href="https://github.com/rhasspy/gruut">gruut</a> and for Indonesian, we use <a href="https://github.com/bookbot-kids/g2p_id">g2p_id</a>. To add support for other languages, you would need a grapheme-to-phoneme converter for that language, and support it as a processor in TensorFlowTTS. We will introduce a separate tutorial for that in the future.</p>
-<h2 id="lightspeech">LightSpeech</h2>
-<p>LightSpeech follows the same architecture as <a href="https://arxiv.org/abs/2006.04558">FastSpeech2</a>, except with an optimized model configuration obtained via Neural Architecture Search (NAS). In our case, we don't really perform NAS, but use the previously found best model configuration.</p>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/assets/fastspeech2.png"><img alt="FastSpeech2" loading="lazy" src="/assets/fastspeech2.png"/></a></p>
-<h2 id="multi-band-melgan">Multi-band MelGAN</h2>
-<p>Multi-Band MelGAN is an improvement upon <a href="https://arxiv.org/abs/1910.06711">MelGAN</a> that does waveform generation and waveform discrimination on a multi-band basis.</p>
-<figure>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/assets/mb-melgan.png"><img alt="MB-MelGAN" loading="lazy" src="/assets/mb-melgan.png" width="500"/></a></p>
-</figure>
-<h2 id="hifi-gan-discrminator">HiFi-GAN Discrminator</h2>
-<p>Further, instead of using the original discriminator, we can use the discriminator presented in the HiFi-GAN paper.</p>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/assets/hifigan-discriminator.png"><img alt="HiFi-GAN-Discriminator" loading="lazy" src="/assets/hifigan-discriminator.png"/></a></p>
-<p>We specifically use the multi-period discriminator (MPD) on the right.</p>
+<h1 id="dataset">Dataset</h1>
+<h2 id="folder-structure">Folder Structure</h2>
+<p>The structure of the training files is fairly simple and straightforward:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>{YOUR_DATASET}/
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>├── {SPEAKER-1}/
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>│   ├── {SPEAKER-1}_{UTTERANCE-0}.lab
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>│   ├── {SPEAKER-1}_{UTTERANCE-0}.wav
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>│   ├── {SPEAKER-1}_{UTTERANCE-1}.lab
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>│   ├── {SPEAKER-1}_{UTTERANCE-1}.wav
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>│   ├── ...
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>├── {SPEAKER-2}/
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>│   ├── {SPEAKER-2}_{UTTERANCE-0}.lab
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>│   ├── {SPEAKER-2}_{UTTERANCE-0}.wav
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>│   ├── ...
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>├── ...
+</code></pre></div>
+<p>A few key things to note here:</p>
+<ul>
+<li>Each speaker has its own subfolder within the root dataset folder.</li>
+<li>The filenames in the speaker subfolders follow the convention of <code>{SPEAKER-#}_{UTTERANCE-#}</code>. It is important that they are delimited by an underscore (<code>_</code>), so make sure that there is no <code>_</code> within the speaker name and within the utterance ID. Use dashes <code>-</code> instead within them instead.</li>
+<li>Audios are in <code>wav</code> format and transcripts are of <code>lab</code> format (same content as you expect from a <code>txt</code> file; nothing fancy about it). The reason we use <code>lab</code> is simply to facilitate Montreal Forced Aligner training later.</li>
+</ul>
+<h3 id="example">Example</h3>
+<p>In the root directory <code>en-bookbot</code>, there are three speakers: <code>en-AU-Zak</code>, <code>en-UK-Thalia</code>, and <code>en-US-Madison</code>. The struture of the files are as follows:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a>en-bookbot/
+<a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a>├── en-AU-Zak/
+<a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a>│   ├── en-AU-Zak_0.lab
+<a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a>│   ├── en-AU-Zak_0.wav
+<a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a>│   ├── en-AU-Zak_1.lab
+<a href="#__codelineno-1-6" id="__codelineno-1-6" name="__codelineno-1-6"></a>│   ├── en-AU-Zak_1.wav
+<a href="#__codelineno-1-7" id="__codelineno-1-7" name="__codelineno-1-7"></a>│   ├── ...
+<a href="#__codelineno-1-8" id="__codelineno-1-8" name="__codelineno-1-8"></a>├── en-UK-Thalia/
+<a href="#__codelineno-1-9" id="__codelineno-1-9" name="__codelineno-1-9"></a>│   ├── en-UK-Thalia_0.lab
+<a href="#__codelineno-1-10" id="__codelineno-1-10" name="__codelineno-1-10"></a>│   ├── en-UK-Thalia_0.wav
+<a href="#__codelineno-1-11" id="__codelineno-1-11" name="__codelineno-1-11"></a>│   ├── ...
+<a href="#__codelineno-1-12" id="__codelineno-1-12" name="__codelineno-1-12"></a>└── en-US-Madison/
+<a href="#__codelineno-1-13" id="__codelineno-1-13" name="__codelineno-1-13"></a>    ├── en-US-Madison_0.lab
+<a href="#__codelineno-1-14" id="__codelineno-1-14" name="__codelineno-1-14"></a>    ├── en-US-Madison_0.wav
+<a href="#__codelineno-1-15" id="__codelineno-1-15" name="__codelineno-1-15"></a>    ├── ...
+</code></pre></div>
+<h2 id="lexicon">Lexicon</h2>
+<p>Another required component for training a Montreal Forced Aligner is a lexicon file (usually named <code>lexicon.txt</code>). A lexicon simply maps words (graphemes) to phonemes, i.e. a pronunciation dictionary. Later, these phonemes will be aligned to segments of audio that they correpond to, and its duration will be learned by the forced aligner.</p>
+<p>There are many available lexicons out there, such as ones provided by <a href="https://mfa-models.readthedocs.io/en/latest/dictionary/index.html">Montreal Forced Aligner</a> and <a href="https://github.com/open-dict-data/ipa-dict">Open Dict Data</a>. You can either find other pre-existing lexicons, or create your own. Otherwise, another option would to treat each grapheme character as proxy phonemes as done by <a href="https://arxiv.org/abs/2207.03546">Meyer et al. (2022)</a> where a lexicon is unavailable in certain languages:</p>
+<blockquote>
+<p>Two languages (ewe and yor) were aligned via forced alignment from scratch. Using only the found audio and transcripts (i.e., without a pre-trained acoustic model), an acoustic model was trained and the data aligned with the Montreal Forced Aligner. Graphemes were used as a proxy for phonemes in place of G2P data.</p>
+</blockquote>
+<p>In any case, the lexicon file should consist of <code>tab</code>-delimited word-phoneme pairs, which looks like the following:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a>what    w ˈʌ t
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a>is    ˈɪ z
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a>biology    b aɪ ˈɑ l ə d͡ʒ i
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a>?    ?
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>the    ð ə
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a>study    s t ˈʌ d i
+<a href="#__codelineno-2-7" id="__codelineno-2-7" name="__codelineno-2-7"></a>of    ə v
+<a href="#__codelineno-2-8" id="__codelineno-2-8" name="__codelineno-2-8"></a>living    l ˈɪ v ɪ ŋ
+<a href="#__codelineno-2-9" id="__codelineno-2-9" name="__codelineno-2-9"></a>things    θ ˈɪ ŋ z
+<a href="#__codelineno-2-10" id="__codelineno-2-10" name="__codelineno-2-10"></a>.    .
+<a href="#__codelineno-2-11" id="__codelineno-2-11" name="__codelineno-2-11"></a>from    f ɹ ˈʌ m
+<a href="#__codelineno-2-12" id="__codelineno-2-12" name="__codelineno-2-12"></a>...
+</code></pre></div>
+<p>Another example would be:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a>:    :
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a>,    ,
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>.    .
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>!    !
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>?    ?
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>;    ;
+<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a>a    a
+<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a>b    b e
+<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a>c    tʃ e
+<a href="#__codelineno-3-10" id="__codelineno-3-10" name="__codelineno-3-10"></a>d    d e
+<a href="#__codelineno-3-11" id="__codelineno-3-11" name="__codelineno-3-11"></a>abad    a b a d
+<a href="#__codelineno-3-12" id="__codelineno-3-12" name="__codelineno-3-12"></a>abadi    a b a d i
+<a href="#__codelineno-3-13" id="__codelineno-3-13" name="__codelineno-3-13"></a>abadiah    a b a d i a h
+<a href="#__codelineno-3-14" id="__codelineno-3-14" name="__codelineno-3-14"></a>abadikan    a b a d i k a n
+<a href="#__codelineno-3-15" id="__codelineno-3-15" name="__codelineno-3-15"></a>...
+</code></pre></div>
+<p>There are a few key things to note as well:</p>
+<ul>
+<li>The lexicon should cover all words in the audio corpus -- no out-of-vocabulary words should be present during the training of the aligner later. Otherwise, this will result in unknown tokens and will likely disrupt the training and duration parsing processes.</li>
+<li>Include all the punctuations you would want to have in the model later. For instance, I would usually keep <code>. , : ; ? !</code> because they might imply different pause durations and/or intonations. Every other punctuations not in the lexicon will be stripped during the alignment process.</li>
+<li>Individual phonemes should be separated with whitespaces, e.g. <code>a</code> is its own phoneme unit, and <code>tʃ</code> is also considered as another single phoneme unit despite having 2 characters.</li>
+</ul>
+<p>Structuring your dataset, preprocessing, and lexicon preparation are arguably the most complicated part of training these kinds of models. But once we're over this step, everything else should be quite easy to follow.</p>
 </article>
 </div>
 </div>
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Installation" class="md-footer__link md-footer__link--prev" href="../../../installation/" rel="prev">
+<a aria-label="Previous: Introduction" class="md-footer__link md-footer__link--prev" href="../intro/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -296,17 +372,17 @@
 <span class="md-footer__direction">
                 Previous
               </span>
-              Installation
+              Introduction
             </div>
 </div>
 </a>
-<a aria-label="Next: Dataset" class="md-footer__link md-footer__link--next" href="../dataset/" rel="next">
+<a aria-label="Next: Duration Extraction" class="md-footer__link md-footer__link--next" href="../duration-extraction/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Dataset
+              Duration Extraction
             </div>
 </div>
 <div class="md-footer__button md-icon">
