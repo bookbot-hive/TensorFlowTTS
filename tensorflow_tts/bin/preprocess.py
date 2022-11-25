@@ -217,7 +217,7 @@ def gen_audio_features(item, config):
 
     # check sample rate
     if rate != config["sampling_rate"]:
-        audio = librosa.resample(audio, rate, config["sampling_rate"])
+        audio = librosa.resample(audio, orig_sr=rate, target_sr=config["sampling_rate"])
         logging.info(
             f"{utt_id} sampling rate is {rate}, not {config['sampling_rate']}, we resample it."
         )
@@ -250,7 +250,9 @@ def gen_audio_features(item, config):
 
     # resample audio if necessary
     if "sampling_rate_for_feats" in config:
-        audio = librosa.resample(audio, rate, config["sampling_rate_for_feats"])
+        audio = librosa.resample(
+            audio, orig_sr=rate, target_sr=config["sampling_rate_for_feats"]
+        )
         sampling_rate = config["sampling_rate_for_feats"]
         assert (
             config["hop_size"] * config["sampling_rate_for_feats"] % rate == 0
