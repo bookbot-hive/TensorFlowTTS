@@ -41,7 +41,8 @@ from tensorflow_tts.processor import LJSpeechUltimateProcessor
 from tensorflow_tts.processor import SynpaflexProcessor
 from tensorflow_tts.processor import JSUTProcessor
 from tensorflow_tts.processor import IndonesianIPAProcessor
-from tensorflow_tts.processor.english_ipa import EnglishIPAProcessor
+from tensorflow_tts.processor import EnglishIPAProcessor
+from tensorflow_tts.processor import JavaneseCharacterProcessor
 from tensorflow_tts.processor.ljspeech import LJSPEECH_SYMBOLS
 from tensorflow_tts.processor.baker import BAKER_SYMBOLS
 from tensorflow_tts.processor.kss import KSS_SYMBOLS
@@ -52,6 +53,7 @@ from tensorflow_tts.processor.synpaflex import SYNPAFLEX_SYMBOLS
 from tensorflow_tts.processor.jsut import JSUT_SYMBOLS
 from tensorflow_tts.processor.indonesian_ipa import INDONESIAN_IPA_SYMBOLS
 from tensorflow_tts.processor.english_ipa import ENGLISH_IPA_SYMBOLS
+from tensorflow_tts.processor.javanese_char import JAVANESE_CHARACTER_SYMBOLS
 
 from tensorflow_tts.utils import remove_outlier
 
@@ -94,6 +96,7 @@ def parse_and_config():
             "jsut",
             "indonesianipa",
             "englishipa",
+            "javanesechar",
         ],
         help="Dataset to preprocess.",
     )
@@ -383,6 +386,7 @@ def preprocess():
         "jsut": JSUTProcessor,
         "indonesianipa": IndonesianIPAProcessor,
         "englishipa": EnglishIPAProcessor,
+        "javanesechar": JavaneseCharacterProcessor,
     }
 
     dataset_symbol = {
@@ -397,6 +401,7 @@ def preprocess():
         "jsut": JSUT_SYMBOLS,
         "indonesianipa": INDONESIAN_IPA_SYMBOLS,
         "englishipa": ENGLISH_IPA_SYMBOLS,
+        "javanesechar": JAVANESE_CHARACTER_SYMBOLS,
     }
 
     dataset_cleaner = {
@@ -411,6 +416,7 @@ def preprocess():
         "jsut": None,
         "indonesianipa": None,
         "englishipa": None,
+        "javanesechar": None,
     }
 
     logging.info(f"Selected '{config['dataset']}' processor.")
