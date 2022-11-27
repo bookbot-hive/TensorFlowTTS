@@ -139,5 +139,5 @@ class JavaneseCharacterProcessor(BaseProcessor):
             if char in _punctuation:
                 data.append(char)
             elif char != " ":
-                data.append("@" + char)
+                data.append("@" + char.lower())
         return data
