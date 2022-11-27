@@ -190,7 +190,10 @@ def ph_based_trim(
         audio = audio[s_trim:]
     if trim_end:
         e_trim = int(durations[-1] * hop_size)
-        audio = audio[:-e_trim]
+        # sometimes, duration of SIL is 0 (very short silences)
+        # if e_trim == 0, -0 will remove all audio!
+        if e_trim != 0:
+            audio = audio[:-e_trim]
 
     durations = durations[idx_start:idx_end]
     np.save(os.path.join(duration_fixed_path, f"{utt_id}-durations.npy"), durations)
