@@ -55,6 +55,7 @@ extra_javascript:
 nav:
   - Home: index.md
   - Installation: guides/installation.md
+  - Audio Samples: audio.md
   - Live Demo: https://huggingface.co/spaces/bookbot/Text-to-Speech-Playground
   - Model Zoo:
       - English: models/english.md
