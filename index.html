@@ -168,7 +168,7 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="installation/">
+<a class="md-nav__link" href="guides/installation/">
         Installation
       </a>
 </li>
@@ -205,49 +205,54 @@
 <li class="md-nav__item md-nav__item--section md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5">
-          Recipes
+          Guides
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="Recipes" class="md-nav" data-md-level="1">
+<nav aria-label="Guides" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_5">
 <span class="md-nav__icon md-icon"></span>
-          Recipes
+          Guides
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" id="__nav_5_1" type="checkbox"/>
 <label class="md-nav__link" for="__nav_5_1">
-          LightSpeech &amp; Multi-band MelGAN
+          Train LightSpeech &amp; Multi-band MelGAN
           <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-label="LightSpeech &amp; Multi-band MelGAN" class="md-nav" data-md-level="2">
+<nav aria-label="Train LightSpeech &amp; Multi-band MelGAN" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_5_1">
 <span class="md-nav__icon md-icon"></span>
-          LightSpeech &amp; Multi-band MelGAN
+          Train LightSpeech &amp; Multi-band MelGAN
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="recipes/lightspeech-mbmelgan/intro/">
+<a class="md-nav__link" href="guides/lightspeech-mbmelgan/intro/">
         Introduction
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="recipes/lightspeech-mbmelgan/dataset/">
+<a class="md-nav__link" href="guides/lightspeech-mbmelgan/dataset/">
         Dataset
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="recipes/lightspeech-mbmelgan/duration-extraction/">
+<a class="md-nav__link" href="guides/lightspeech-mbmelgan/duration-extraction/">
         Duration Extraction
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="recipes/lightspeech-mbmelgan/training/">
+<a class="md-nav__link" href="guides/lightspeech-mbmelgan/training/">
         Training
       </a>
 </li>
 </ul>
 </nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="guides/tensorflowlite/">
+        Convert and Infer Models on TensorFlowLite
+      </a>
 </li>
 </ul>
 </nav>
@@ -290,22 +295,16 @@
 <p>This documentation web page aims to fully cover the end-to-end pipeline of using <a href="https://github.com/TensorSpeech/TensorFlowTTS/">TensorFlowTTS</a> to train and deploy text-to-speech models. Since the original repository seems to be inactive, these set of tutorials will work on this <a href="https://github.com/w11wo/TensorFlowTTS/">fork</a> developed by Wilson Wongso which contains new features.</p>
 <h2 id="newly-added-features">Newly Added Features</h2>
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/International_Phonetic_Alphabet">IPA</a>-based Acoustic models for English and Indonesian</li>
-<li><a href="https://arxiv.org/abs/2102.04040">LightSpeech</a></li>
+<li>IPA-based Acoustic models for English and Indonesian</li>
+<li>LightSpeech</li>
 </ul>
 <h2 id="guides">Guides</h2>
 <ul>
-<li><a href="./installation">Installing TensorFlowTTS</a></li>
-<li>Recipes<ul>
-<li><a href="./recipes/lightspeech-mbmelgan/intro">LightSpeech &amp; Multi-band MelGAN</a></li>
-<li>Adding Custom Processor</li>
-</ul>
-</li>
-<li>Inference/Deployment<ul>
-<li>Converting to TensorFlow Lite</li>
+<li><a href="./guides/installation">Installing TensorFlowTTS</a></li>
+<li><a href="./guides/lightspeech-mbmelgan/intro">Train LightSpeech &amp; Multi-band MelGAN</a></li>
+<li>Implementing Custom Processor</li>
+<li><a href="guides/tensorflowlite/">Convert and Infer Models on TensorFlowLite</a></li>
 <li>Inference using TensorFlow Lite</li>
-</ul>
-</li>
 </ul>
 </article>
 </div>
@@ -313,7 +312,7 @@
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Next: Installation" class="md-footer__link md-footer__link--next" href="installation/" rel="next">
+<a aria-label="Next: Installation" class="md-footer__link md-footer__link--next" href="guides/installation/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">

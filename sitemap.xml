@@ -2,42 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/</loc>
-         <lastmod>2022-11-25</lastmod>
+         <lastmod>2022-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://w11wo.github.io/TensorFlowTTS/installation/</loc>
-         <lastmod>2022-11-25</lastmod>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/installation/</loc>
+         <lastmod>2022-11-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/tensorflowlite/</loc>
+         <lastmod>2022-11-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/dataset/</loc>
+         <lastmod>2022-11-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/duration-extraction/</loc>
+         <lastmod>2022-11-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/intro/</loc>
+         <lastmod>2022-11-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/training/</loc>
+         <lastmod>2022-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/models/english/</loc>
-         <lastmod>2022-11-25</lastmod>
+         <lastmod>2022-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/models/indonesian/</loc>
-         <lastmod>2022-11-25</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://w11wo.github.io/TensorFlowTTS/recipes/lightspeech-mbmelgan/dataset/</loc>
-         <lastmod>2022-11-25</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://w11wo.github.io/TensorFlowTTS/recipes/lightspeech-mbmelgan/duration-extraction/</loc>
-         <lastmod>2022-11-25</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://w11wo.github.io/TensorFlowTTS/recipes/lightspeech-mbmelgan/intro/</loc>
-         <lastmod>2022-11-25</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://w11wo.github.io/TensorFlowTTS/recipes/lightspeech-mbmelgan/training/</loc>
-         <lastmod>2022-11-25</lastmod>
+         <lastmod>2022-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
