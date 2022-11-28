@@ -11,6 +11,5 @@ This documentation web page aims to fully cover the end-to-end pipeline of using
 
 - [Installing TensorFlowTTS](./guides/installation)
 - [Train LightSpeech & Multi-band MelGAN](./guides/lightspeech-mbmelgan/intro)
-- Implementing Custom Processor
 - [Convert and Infer Models on TensorFlowLite](./guides/tensorflowlite.md)
-- Inference using TensorFlow Lite
+- Implementing Custom Processor

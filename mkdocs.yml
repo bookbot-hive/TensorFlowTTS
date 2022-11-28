@@ -65,4 +65,5 @@ nav:
           - Dataset: guides/lightspeech-mbmelgan/dataset.md
           - Duration Extraction: guides/lightspeech-mbmelgan/duration-extraction.md
           - Training: guides/lightspeech-mbmelgan/training.md
+          - Inference: guides/lightspeech-mbmelgan/inference.md
       - Convert and Infer Models on TensorFlowLite: guides/tensorflowlite.md
