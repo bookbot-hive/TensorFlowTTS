@@ -29,6 +29,9 @@ from tensorflow_tts.processor.indonesian_ipa import (
 from tensorflow_tts.processor.english_ipa import (
     ENGLISH_IPA_SYMBOLS as english_ipa_symbols,
 )
+from tensorflow_tts.processor.javanese_char import (
+    JAVANESE_CHARACTER_SYMBOLS as javanese_char_symbols,
+)
 
 
 SelfAttentionParams = collections.namedtuple(
@@ -111,6 +114,8 @@ class FastSpeechConfig(BaseConfig):
             self.vocab_size = len(indonesian_ipa_symbols)
         elif dataset == "englishipa":
             self.vocab_size = len(english_ipa_symbols)
+        elif dataset == "javanesechar":
+            self.vocab_size = len(javanese_char_symbols)
         else:
             raise ValueError("No such dataset: {}".format(dataset))
         self.initializer_range = initializer_range

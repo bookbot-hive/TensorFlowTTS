@@ -12,29 +12,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Perform preprocessing and raw feature extraction for English IPA dataset."""
+"""Perform preprocessing and raw feature extraction for Alphabet-based dataset."""
 
 import os
-import re
-from string import punctuation
 
 import numpy as np
 import soundfile as sf
 from dataclasses import dataclass
 
-from gruut import sentences
-
 from tensorflow_tts.processor.base_processor import BaseProcessor
 from tensorflow_tts.utils.utils import PROCESSOR_FILE_NAME
 
 valid_symbols = [
-    "aɪ",
-    "aʊ",
+    "a",
     "b",
+    "c",
     "d",
-    "d͡ʒ",
-    "eɪ",
+    "e",
     "f",
+    "g",
     "h",
     "i",
     "j",
@@ -42,75 +38,33 @@ valid_symbols = [
     "l",
     "m",
     "n",
-    "oʊ",
+    "o",
     "p",
+    "q",
+    "r",
     "s",
     "t",
-    "t͡ʃ",
     "u",
     "v",
     "w",
+    "x",
+    "y",
     "z",
-    "æ",
-    "ð",
-    "ŋ",
-    "ɑ",
-    "ɔ",
-    "ɔɪ",
-    "ə",
-    "ɚ",
-    "ɛ",
-    "ɡ",
-    "ɪ",
-    "ɹ",
-    "ʃ",
-    "ʊ",
-    "ʌ",
-    "ʒ",
-    "ˈaɪ",
-    "ˈaʊ",
-    "ˈeɪ",
-    "ˈi",
-    "ˈoʊ",
-    "ˈu",
-    "ˈæ",
-    "ˈɑ",
-    "ˈɔ",
-    "ˈɔɪ",
-    "ˈɚ",
-    "ˈɛ",
-    "ˈɪ",
-    "ˈʊ",
-    "ˈʌ",
-    "ˌaɪ",
-    "ˌaʊ",
-    "ˌeɪ",
-    "ˌi",
-    "ˌoʊ",
-    "ˌu",
-    "ˌæ",
-    "ˌɑ",
-    "ˌɔ",
-    "ˌɔɪ",
-    "ˌɚ",
-    "ˌɛ",
-    "ˌɪ",
-    "ˌʊ",
-    "ˌʌ",
-    "θ",
+    "è",
+    "é",
 ]
 
 _punctuation = "!,.?;:"
 _sil = "@SIL"
 _eos = "@EOS"
 _pad = "@PAD"
-_ipa = ["@" + s for s in valid_symbols]
+_char = ["@" + s for s in valid_symbols]
 
-ENGLISH_IPA_SYMBOLS = [_pad] + _ipa + list(_punctuation) + [_sil] + [_eos]
+JAVANESE_CHARACTER_SYMBOLS = [_pad] + _char + list(_punctuation) + [_sil] + [_eos]
 
 
 @dataclass
-class EnglishIPAProcessor(BaseProcessor):
+class JavaneseCharacterProcessor(BaseProcessor):
 
     mode: str = "train"
     train_f_name: str = "train.txt"
@@ -165,33 +119,25 @@ class EnglishIPAProcessor(BaseProcessor):
     def text_to_sequence(self, text):
         if (
             self.mode == "train"
-        ):  # in train mode text should be already transformed to phonemes
-            return self.symbols_to_ids(self.clean_g2p(text.split()))
+        ):  # in train mode text should be already transformed to characters
+            return self.symbols_to_ids(self.clean_char(text.split()))
         else:
             return self.inference_text_to_seq(text)
 
     def inference_text_to_seq(self, text: str):
-        return self.symbols_to_ids(self.text_to_ph(text))
+        return self.symbols_to_ids(self.text_to_char(text))
 
     def symbols_to_ids(self, symbols_list: list):
         return [self.symbol_to_id[s] for s in symbols_list]
 
-    def text_to_ph(self, text: str):
-        phn_arr = []
-        for words in sentences(text):
-            for word in words:
-                if word.is_major_break or word.is_minor_break:
-                    phn_arr += [word.text]
-                elif word.phonemes:
-                    phn_arr += word.phonemes
+    def text_to_char(self, text: str):
+        return self.clean_char([c for c in text])
 
-        return self.clean_g2p(phn_arr)
-
-    def clean_g2p(self, g2p_text: list):
+    def clean_char(self, characters: list):
         data = []
-        for txt in g2p_text:
-            if txt in punctuation:
-                data.append(txt)
-            elif txt != " ":
-                data.append("@" + txt)
+        for char in characters:
+            if char in _punctuation:
+                data.append(char)
+            elif char != " ":
+                data.append("@" + char.lower())
         return data

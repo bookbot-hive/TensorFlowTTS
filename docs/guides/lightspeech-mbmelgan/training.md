@@ -199,3 +199,36 @@ cp checkpoints/generator-1000000.h5 model.h5
 ```
 
 With that, we are done!
+
+## Extra: Pushing Models to HuggingFace Hub
+
+To wrap things up, it will be very convenient to push our models to [HuggingFace Hub](https://huggingface.co/models). This would allow us to not only load pre-trained model weights stored on the Hub, but also has other goodies such as version control, documentation, etc., that comes with using Git.
+
+First, create a new repository on the Hub [here](https://huggingface.co/new). Second, install [Git LFS](https://git-lfs.github.com/) in the machine you're working on
+
+```sh
+sudo apt-get install git-lfs
+git lfs install
+```
+
+The rest is pretty much the same as how you would push files to a Git repository. For example
+
+```sh
+git clone https://huggingface.co/bookbot/lightspeech-mfa-en
+cp -r lightspeech-en-bookbot/* lightspeech-mfa-en
+cd lightspeech-mfa-en
+git add . && git commit -m "added weights" && git push
+```
+
+```sh
+git clone https://huggingface.co/bookbot/mb-melgan-hifi-postnets-en
+cp -r mb-melgan-hifi-en-bookbot/* mb-melgan-hifi-postnets-en
+cd mb-melgan-hifi-postnets-en
+git add . && git commit -m "added weights" && git push
+```
+
+This would allow us to load models like so (in Python):
+
+```py
+model = TFAutoModel.from_pretrained("bookbot/lightspeech-mfa-en")
+```
