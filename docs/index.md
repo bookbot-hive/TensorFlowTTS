@@ -4,15 +4,13 @@ This documentation web page aims to fully cover the end-to-end pipeline of using
 
 ## Newly Added Features
 
-- [IPA](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet)-based Acoustic models for English and Indonesian
-- [LightSpeech](https://arxiv.org/abs/2102.04040)
+- IPA-based Acoustic models for English and Indonesian
+- LightSpeech
 
 ## Guides
 
-- [Installing TensorFlowTTS](./installation)
-- Recipes
-    - [LightSpeech & Multi-band MelGAN](./recipes/lightspeech-mbmelgan/intro)
-    - Adding Custom Processor
-- Inference/Deployment
-    - Converting to TensorFlow Lite
-    - Inference using TensorFlow Lite
+- [Installing TensorFlowTTS](./guides/installation)
+- [Train LightSpeech & Multi-band MelGAN](./guides/lightspeech-mbmelgan/intro)
+- Implementing Custom Processor
+- [Convert and Infer Models on TensorFlowLite](./guides/tensorflowlite.md)
+- Inference using TensorFlow Lite
