@@ -248,6 +248,11 @@
     Training Multi-band MelGAN
   </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#extra-pushing-models-to-huggingface-hub">
+    Extra: Pushing Models to HuggingFace Hub
+  </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -289,6 +294,11 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#training-multi-band-melgan">
     Training Multi-band MelGAN
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#extra-pushing-models-to-huggingface-hub">
+    Extra: Pushing Models to HuggingFace Hub
   </a>
 </li>
 </ul>
@@ -466,6 +476,26 @@
 <a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a>cp checkpoints/generator-1000000.h5 model.h5
 </code></pre></div>
 <p>With that, we are done!</p>
+<h2 id="extra-pushing-models-to-huggingface-hub">Extra: Pushing Models to HuggingFace Hub</h2>
+<p>To wrap things up, it will be very convenient to push our models to <a href="https://huggingface.co/models">HuggingFace Hub</a>. This would allow us to not only load pre-trained model weights stored on the Hub, but also has other goodies such as version control, documentation, etc., that comes with using Git.</p>
+<p>First, create a new repository on the Hub <a href="https://huggingface.co/new">here</a>. Second, install <a href="https://git-lfs.github.com/">Git LFS</a> in the machine you're working on</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a>sudo apt-get install git-lfs
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a>git lfs install
+</code></pre></div>
+<p>The rest is pretty much the same as how you would push files to a Git repository. For example</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a>git clone https://huggingface.co/bookbot/lightspeech-mfa-en
+<a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a>cp -r lightspeech-en-bookbot/* lightspeech-mfa-en
+<a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="nb">cd</span> lightspeech-mfa-en
+<a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a>git add . <span class="o">&amp;&amp;</span> git commit -m <span class="s2">"added weights"</span> <span class="o">&amp;&amp;</span> git push
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a>git clone https://huggingface.co/bookbot/mb-melgan-hifi-postnets-en
+<a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a>cp -r mb-melgan-hifi-en-bookbot/* mb-melgan-hifi-postnets-en
+<a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="nb">cd</span> mb-melgan-hifi-postnets-en
+<a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a>git add . <span class="o">&amp;&amp;</span> git commit -m <span class="s2">"added weights"</span> <span class="o">&amp;&amp;</span> git push
+</code></pre></div>
+<p>This would allow us to load models like so (in Python):</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">TFAutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"bookbot/lightspeech-mfa-en"</span><span class="p">)</span>
+</code></pre></div>
 </article>
 </div>
 </div>
