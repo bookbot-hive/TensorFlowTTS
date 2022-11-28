@@ -26,6 +26,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/inference/</loc>
+         <lastmod>2022-11-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/intro/</loc>
          <lastmod>2022-11-28</lastmod>
          <changefreq>daily</changefreq>
