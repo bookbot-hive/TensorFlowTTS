@@ -2,57 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/</loc>
-         <lastmod>2022-11-28</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://w11wo.github.io/TensorFlowTTS/audio/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/installation/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/tensorflowlite/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/dataset/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/duration-extraction/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/inference/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/intro/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/guides/lightspeech-mbmelgan/training/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/models/english/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://w11wo.github.io/TensorFlowTTS/models/indonesian/</loc>
-         <lastmod>2022-11-28</lastmod>
+         <lastmod>2022-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/results/english/</loc>
+         <lastmod>2022-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://w11wo.github.io/TensorFlowTTS/results/indonesian/</loc>
+         <lastmod>2022-11-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
