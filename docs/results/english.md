@@ -1,8 +1,6 @@
-# Audio Samples
+# English
 
-## English
-
-### Azure
+## Azure
 
 *She says that she has more books as well.*
 
@@ -22,7 +20,7 @@
 | : ------------------------------------------------------------------------------------------- : | : -------------------------------------------------------------------------------------------------------- : | : -------------------------------------------------------------------------------------------------------- : |
 | <audio controls><source src="../assets/audios/english/original/3.wav" type="audio/wav"></audio> | <audio controls><source src="../assets/audios/english/fastspeech2-mfa-en-v4/3.wav" type="audio/wav"></audio> | <audio controls><source src="../assets/audios/english/lightspeech-mfa-en-v2/3.wav" type="audio/wav"></audio> |
 
-### Emotional Speech Dataset - 0013
+## Emotional Speech Dataset - 0013
 
 *The nine the eggs, I keep.*
 
@@ -33,25 +31,3 @@
 | Neutral  | <audio controls><source src="../assets/audios/english/original/neutral.wav" type="audio/wav"></audio>  | <audio controls><source src="../assets/audios/english/lightspeech-mfa-en-esd/neutral.wav" type="audio/wav"></audio>  |
 | Surprise | <audio controls><source src="../assets/audios/english/original/surprise.wav" type="audio/wav"></audio> | <audio controls><source src="../assets/audios/english/lightspeech-mfa-en-esd/surprise.wav" type="audio/wav"></audio> |
 | Sad      |   <audio controls><source src="../assets/audios/english/original/sad.wav" type="audio/wav"></audio>    |   <audio controls><source src="../assets/audios/english/lightspeech-mfa-en-esd/sad.wav" type="audio/wav"></audio>    |
-
-## Indonesian
-
-### Azure
-
-*Sepulang sekolah, Fitri sangat lapar.*
-
-|                                            Original Audio                                          |                               LightSpeech MFA ID & MB-MelGAN HiFi PostNets ID v8                             |   
-| : ---------------------------------------------------------------------------------------------- : | : -------------------------------------------------------------------------------------------------------- : | 
-| <audio controls><source src="../assets/audios/indonesian/original/1.wav" type="audio/wav"></audio> | <audio controls><source src="../assets/audios/indonesian/lightspeech-mfa-id/1.wav" type="audio/wav"></audio> |
-
-*Ia harus mengganti baju dahulu.*
-
-|                                            Original Audio                                          |                               LightSpeech MFA ID & MB-MelGAN HiFi PostNets ID v8                             |   
-| : ---------------------------------------------------------------------------------------------- : | : -------------------------------------------------------------------------------------------------------- : | 
-| <audio controls><source src="../assets/audios/indonesian/original/2.wav" type="audio/wav"></audio> | <audio controls><source src="../assets/audios/indonesian/lightspeech-mfa-id/2.wav" type="audio/wav"></audio> |
-
-*Ketika Nina kembali ke gua, ia terlalu besar untuk bisa masuk ke dalamnya!*
-
-|                                            Original Audio                                          |                               LightSpeech MFA ID & MB-MelGAN HiFi PostNets ID v8                             |   
-| : ---------------------------------------------------------------------------------------------- : | : -------------------------------------------------------------------------------------------------------- : | 
-| <audio controls><source src="../assets/audios/indonesian/original/3.wav" type="audio/wav"></audio> | <audio controls><source src="../assets/audios/indonesian/lightspeech-mfa-id/3.wav" type="audio/wav"></audio> |
