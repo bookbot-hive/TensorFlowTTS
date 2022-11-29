@@ -1,0 +1,774 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://w11wo.github.io/TensorFlowTTS/guides/custom_processor/" rel="canonical"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-8.5.10" name="generator"/>
+<title>Implementing Custom Processor - Text-to-Speech with TensorFlowTTS</title>
+<link href="../../assets/stylesheets/main.472b142f.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.08040f6c.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            
+                .gscrollbar-fixer { padding-right: 15px; }
+                .gdesc-inner { font-size: 0.75rem; }
+                body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+                body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+                body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+                </style><script src="../../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="deep-orange" data-md-color-primary="deep-orange" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#implementing-custom-processor">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Text-to-Speech with TensorFlowTTS" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Text-to-Speech with TensorFlowTTS">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Text-to-Speech with TensorFlowTTS
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Implementing Custom Processor
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="deep-orange" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="deep-orange" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"></path></svg>
+</label>
+</form>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/w11wo/TensorFlowTTS" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Text-to-Speech with TensorFlowTTS" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Text-to-Speech with TensorFlowTTS">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+    Text-to-Speech with TensorFlowTTS
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/w11wo/TensorFlowTTS" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../installation/">
+        Installation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="https://huggingface.co/spaces/bookbot/Text-to-Speech-Playground">
+        Live Demo
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4">
+          Audio Samples
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Audio Samples" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+          Audio Samples
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../results/english/">
+        English
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../results/indonesian/">
+        Indonesian
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5">
+          Model Zoo
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Model Zoo" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+          Model Zoo
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../models/english/">
+        English
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../models/indonesian/">
+        Indonesian
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Guides" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_1" id="__nav_6_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1">
+          Train LightSpeech &amp; Multi-band MelGAN
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Train LightSpeech &amp; Multi-band MelGAN" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_1">
+<span class="md-nav__icon md-icon"></span>
+          Train LightSpeech &amp; Multi-band MelGAN
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/intro/">
+        Introduction
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/dataset/">
+        Dataset
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/duration-extraction/">
+        Duration Extraction
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/training/">
+        Training
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/inference/">
+        Inference
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../tensorflowlite/">
+        Convert and Infer Models on TensorFlowLite
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Implementing Custom Processor
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Implementing Custom Processor
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#processor-and-phonemization">
+    Processor and Phonemization
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#processor">
+    Processor
+  </a>
+<nav aria-label="Processor" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#vocabulary">
+    Vocabulary
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#metadata-format">
+    Metadata Format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#text-to-sequence">
+    Text-to-Sequence
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#preprocess">
+    Preprocess
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-with-text2mel-models">
+    Integrating with text2mel Models
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#autoprocessor">
+    AutoProcessor
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#processor-and-phonemization">
+    Processor and Phonemization
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#processor">
+    Processor
+  </a>
+<nav aria-label="Processor" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#vocabulary">
+    Vocabulary
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#metadata-format">
+    Metadata Format
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#text-to-sequence">
+    Text-to-Sequence
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#preprocess">
+    Preprocess
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-with-text2mel-models">
+    Integrating with text2mel Models
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#autoprocessor">
+    AutoProcessor
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/w11wo/TensorFlowTTS/edit/master/docs/guides/custom_processor.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="implementing-custom-processor">Implementing Custom Processor</h1>
+<p>There are only a handful of languages supported by the original TensorFlowTTS repository. Supporting a new language requires the implementation of a custom processor, which is crucial when designing text-to-speech models. </p>
+<h2 id="processor-and-phonemization">Processor and Phonemization</h2>
+<p>A processor serves as a tokenizer that helps encode texts into IDs, i.e. numerical representation of texts that you're going to synthesize. Naively, we can represent each character of say, the English language, as one unique ID and have characters as our 'tokens'. This is indeed the default behavior of the <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/processor/ljspeech.py">LJSpeech Processor</a>.</p>
+<p>Other processors, however, choose to utilize grapheme-to-phoneme converters, and have phonemes as their tokens instead of individual raw characters. This intuitively makes sense, since phonemization in languages like English isn't straightforward, and mapping phonemes to their corresponding mel-spectrogram makes much more sense.</p>
+<p>However, this is only possible if a grapheme-to-phoneme (g2p) converter for a particular language exists. High-resource languages like English has tools such as <a href="https://github.com/Kyubyong/g2p">g2pE</a> and <a href="https://github.com/rhasspy/gruut">gruut</a>, Korean has <a href="https://github.com/Kyubyong/g2pK">g2pK</a>, etc. Alternatively, you might be able to build your own g2p converter if you at least have a lexicon (see <a href="https://github.com/open-dict-data/ipa-dict">ipa-dict</a>), which you can then take and use to build g2p models via <a href="https://montreal-forced-aligner.readthedocs.io/en/latest/first_steps/index.html#first-steps-train-g2p">Montreal Forced Aligner</a>, for example.</p>
+<p>What if you don't, though? High-to-mid-resource might be able to get away with existing curated tools and/or lexicons, but low-resource languages might be a bit more problematic. In that case, probably the best bet is a character-based tokenizer, where your graphemes (characters) serve as proxy-phonemes. <a href="https://arxiv.org/abs/2207.03546">Meyer et al. (2022)</a> trained text-to-speech models on low-resource African languages, and for certain languages where a lexicon is unavailable, they used proxy-phonemes:</p>
+<blockquote>
+<p>Two languages (ewe and yor) were aligned via forced alignment from scratch. Using only the found audio and transcripts (i.e., without a pre-trained acoustic model), an acoustic model was trained and the data aligned with the Montreal Forced Aligner. Graphemes were used as a proxy for phonemes in place of G2P data.</p>
+</blockquote>
+<p>As a practical example, I will be attempting to implement a character-based tokenizer for Javanese. Let's get started!</p>
+<h2 id="processor">Processor</h2>
+<h3 id="vocabulary">Vocabulary</h3>
+<p>You first have to create a new processor class under <a href="https://github.com/w11wo/TensorFlowTTS/tree/master/tensorflow_tts/processor">tensorflow_tts/processor</a>, which I'll call <code>JavaneseCharacterProcessor</code>. I really like how the <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/processor/libritts.py">LibriTTS Processor</a> works -- it is well integrated with Montreal Forced Aligner for duration extraction and multi-speaker models. Because of that, I'll be basing my new processor on that file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This was also how I based both <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/processor/english_ipa.py"><code>EnglishIPAProcessor</code></a> and <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/processor/indonesian_ipa.py"><code>IndonesianIPAProcessor</code></a>.</p>
+</div>
+<p>To begin, we have to define a hard-coded list of symbols (vocabulary) that the processor will support. This is highly dependent on the dataset that you're using, as we would want to cover all possible graphemes (so none of them become unknowns). In my case, there's the 26 latin alphabet characters A-Z, plus two additional E's with diacritics: é and è.</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/javanese_char.py</span><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="n">valid_symbols</span> <span class="o">=</span> <span class="p">[</span>
+<a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a>    <span class="s2">"a"</span><span class="p">,</span>
+<a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a>    <span class="s2">"b"</span><span class="p">,</span>
+<a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a>    <span class="s2">"c"</span><span class="p">,</span>
+<a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a>    <span class="s2">"d"</span><span class="p">,</span>
+<a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a>    <span class="s2">"e"</span><span class="p">,</span>
+<a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="s2">"f"</span><span class="p">,</span>
+<a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="s2">"g"</span><span class="p">,</span>
+<a href="#__codelineno-0-9" id="__codelineno-0-9" name="__codelineno-0-9"></a>    <span class="s2">"h"</span><span class="p">,</span>
+<a href="#__codelineno-0-10" id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="s2">"i"</span><span class="p">,</span>
+<a href="#__codelineno-0-11" id="__codelineno-0-11" name="__codelineno-0-11"></a>    <span class="s2">"j"</span><span class="p">,</span>
+<a href="#__codelineno-0-12" id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="s2">"k"</span><span class="p">,</span>
+<a href="#__codelineno-0-13" id="__codelineno-0-13" name="__codelineno-0-13"></a>    <span class="s2">"l"</span><span class="p">,</span>
+<a href="#__codelineno-0-14" id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="s2">"m"</span><span class="p">,</span>
+<a href="#__codelineno-0-15" id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="s2">"n"</span><span class="p">,</span>
+<a href="#__codelineno-0-16" id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="s2">"o"</span><span class="p">,</span>
+<a href="#__codelineno-0-17" id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="s2">"p"</span><span class="p">,</span>
+<a href="#__codelineno-0-18" id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="s2">"q"</span><span class="p">,</span>
+<a href="#__codelineno-0-19" id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="s2">"r"</span><span class="p">,</span>
+<a href="#__codelineno-0-20" id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="s2">"s"</span><span class="p">,</span>
+<a href="#__codelineno-0-21" id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="s2">"t"</span><span class="p">,</span>
+<a href="#__codelineno-0-22" id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="s2">"u"</span><span class="p">,</span>
+<a href="#__codelineno-0-23" id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="s2">"v"</span><span class="p">,</span>
+<a href="#__codelineno-0-24" id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="s2">"w"</span><span class="p">,</span>
+<a href="#__codelineno-0-25" id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="s2">"x"</span><span class="p">,</span>
+<a href="#__codelineno-0-26" id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="s2">"y"</span><span class="p">,</span>
+<a href="#__codelineno-0-27" id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="s2">"z"</span><span class="p">,</span>
+<a href="#__codelineno-0-28" id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="s2">"è"</span><span class="p">,</span>
+<a href="#__codelineno-0-29" id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="s2">"é"</span><span class="p">,</span>
+<a href="#__codelineno-0-30" id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="p">]</span>
+</code></pre></div>
+<p>Be sure to inspect your dataset and cover all possible tokens.</p>
+<p>Next would be punctuations. Again, this is dependent on how you would like to design the processor and which punctuations you would like to keep. I normally only go for <code>! , . ? ; :</code> and nothing else. Anything other than those will simply be ignored. Note that this will be important during inference -- anything outside of the vocabulary will be ignored!</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/javanese_char.py</span><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">_punctuation</span> <span class="o">=</span> <span class="s2">"!,.?;:"</span>
+</code></pre></div>
+<p>There are also additional special tokens such as <code>@SIL</code>, <code>@EOS</code>, <code>@PAD</code> for silence, end-of-sentence, and padding tokens, respectively.</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/javanese_char.py</span><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="n">_sil</span> <span class="o">=</span> <span class="s2">"@SIL"</span>
+<a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="n">_eos</span> <span class="o">=</span> <span class="s2">"@EOS"</span>
+<a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="n">_pad</span> <span class="o">=</span> <span class="s2">"@PAD"</span>
+<a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="n">_char</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"@"</span> <span class="o">+</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">valid_symbols</span><span class="p">]</span>
+<a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a>
+<a href="#__codelineno-2-6" id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="n">JAVANESE_CHARACTER_SYMBOLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">_pad</span><span class="p">]</span> <span class="o">+</span> <span class="n">_char</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">_punctuation</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">_sil</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">_eos</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="metadata-format">Metadata Format</h3>
+<p>An important method in <code>LibriTTSProcessor</code>-based processors is how metadata is formatted and later read. Sticking to the original implementation, I will keep the default format of having a metadata called <code>train.txt</code>, which is populated with <code>|</code>-delimited lines. Each line has 3 columns (in this particular order): </p>
+<ol>
+<li>Path to file</li>
+<li>Text read</li>
+<li>Speaker name</li>
+</ol>
+<p>Moreover, audios are expected to be of <code>.wav</code> format. These are then implemented as class variables inside the processor and influences how the <code>create_items</code> and <code>get_one_sample</code> methods behave. <code>create_items</code> "creates" each training sample, and <code>get_one_sample</code> loads each training sample in their right formats (e.g. read audio via SoundFile, convert text to sequence of IDs, etc.)</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/javanese_char.py</span><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="nd">@dataclass</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="k">class</span> <span class="nc">JavaneseCharacterProcessor</span><span class="p">(</span><span class="n">BaseProcessor</span><span class="p">):</span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a>
+<a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a>    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"train"</span>
+<a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a>    <span class="n">train_f_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"train.txt"</span>
+<a href="#__codelineno-3-6" id="__codelineno-3-6" name="__codelineno-3-6"></a>    <span class="n">positions</span> <span class="o">=</span> <span class="p">{</span>
+<a href="#__codelineno-3-7" id="__codelineno-3-7" name="__codelineno-3-7"></a>        <span class="s2">"file"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<a href="#__codelineno-3-8" id="__codelineno-3-8" name="__codelineno-3-8"></a>        <span class="s2">"text"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a href="#__codelineno-3-9" id="__codelineno-3-9" name="__codelineno-3-9"></a>        <span class="s2">"speaker_name"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+<a href="#__codelineno-3-10" id="__codelineno-3-10" name="__codelineno-3-10"></a>    <span class="p">}</span>  <span class="c1"># positions of file,text,speaker_name after split line</span>
+<a href="#__codelineno-3-11" id="__codelineno-3-11" name="__codelineno-3-11"></a>    <span class="n">f_extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">".wav"</span>
+<a href="#__codelineno-3-12" id="__codelineno-3-12" name="__codelineno-3-12"></a>    <span class="n">cleaner_names</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<a href="#__codelineno-3-13" id="__codelineno-3-13" name="__codelineno-3-13"></a>
+<a href="#__codelineno-3-14" id="__codelineno-3-14" name="__codelineno-3-14"></a>    <span class="k">def</span> <span class="nf">create_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a href="#__codelineno-3-15" id="__codelineno-3-15" name="__codelineno-3-15"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+<a href="#__codelineno-3-16" id="__codelineno-3-16" name="__codelineno-3-16"></a>            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_f_name</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+<a href="#__codelineno-3-17" id="__codelineno-3-17" name="__codelineno-3-17"></a>        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a href="#__codelineno-3-18" id="__codelineno-3-18" name="__codelineno-3-18"></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+<a href="#__codelineno-3-19" id="__codelineno-3-19" name="__codelineno-3-19"></a>                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
+<a href="#__codelineno-3-20" id="__codelineno-3-20" name="__codelineno-3-20"></a>                <span class="n">wav_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="s2">"file"</span><span class="p">]])</span>
+<a href="#__codelineno-3-21" id="__codelineno-3-21" name="__codelineno-3-21"></a>                <span class="n">wav_path</span> <span class="o">=</span> <span class="p">(</span>
+<a href="#__codelineno-3-22" id="__codelineno-3-22" name="__codelineno-3-22"></a>                    <span class="n">wav_path</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_extension</span>
+<a href="#__codelineno-3-23" id="__codelineno-3-23" name="__codelineno-3-23"></a>                    <span class="k">if</span> <span class="n">wav_path</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f_extension</span><span class="p">)</span> <span class="p">:]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_extension</span>
+<a href="#__codelineno-3-24" id="__codelineno-3-24" name="__codelineno-3-24"></a>                    <span class="k">else</span> <span class="n">wav_path</span>
+<a href="#__codelineno-3-25" id="__codelineno-3-25" name="__codelineno-3-25"></a>                <span class="p">)</span>
+<a href="#__codelineno-3-26" id="__codelineno-3-26" name="__codelineno-3-26"></a>                <span class="n">text</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]]</span>
+<a href="#__codelineno-3-27" id="__codelineno-3-27" name="__codelineno-3-27"></a>                <span class="n">speaker_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="s2">"speaker_name"</span><span class="p">]]</span>
+<a href="#__codelineno-3-28" id="__codelineno-3-28" name="__codelineno-3-28"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">text</span><span class="p">,</span> <span class="n">wav_path</span><span class="p">,</span> <span class="n">speaker_name</span><span class="p">])</span>
+<a href="#__codelineno-3-29" id="__codelineno-3-29" name="__codelineno-3-29"></a>
+<a href="#__codelineno-3-30" id="__codelineno-3-30" name="__codelineno-3-30"></a>    <span class="k">def</span> <span class="nf">get_one_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<a href="#__codelineno-3-31" id="__codelineno-3-31" name="__codelineno-3-31"></a>        <span class="n">text</span><span class="p">,</span> <span class="n">wav_path</span><span class="p">,</span> <span class="n">speaker_name</span> <span class="o">=</span> <span class="n">item</span>
+<a href="#__codelineno-3-32" id="__codelineno-3-32" name="__codelineno-3-32"></a>        <span class="n">audio</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">wav_path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"float32"</span><span class="p">)</span>
+<a href="#__codelineno-3-33" id="__codelineno-3-33" name="__codelineno-3-33"></a>
+<a href="#__codelineno-3-34" id="__codelineno-3-34" name="__codelineno-3-34"></a>        <span class="n">text_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text_to_sequence</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<a href="#__codelineno-3-35" id="__codelineno-3-35" name="__codelineno-3-35"></a>
+<a href="#__codelineno-3-36" id="__codelineno-3-36" name="__codelineno-3-36"></a>        <span class="n">sample</span> <span class="o">=</span> <span class="p">{</span>
+<a href="#__codelineno-3-37" id="__codelineno-3-37" name="__codelineno-3-37"></a>            <span class="s2">"raw_text"</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+<a href="#__codelineno-3-38" id="__codelineno-3-38" name="__codelineno-3-38"></a>            <span class="s2">"text_ids"</span><span class="p">:</span> <span class="n">text_ids</span><span class="p">,</span>
+<a href="#__codelineno-3-39" id="__codelineno-3-39" name="__codelineno-3-39"></a>            <span class="s2">"audio"</span><span class="p">:</span> <span class="n">audio</span><span class="p">,</span>
+<a href="#__codelineno-3-40" id="__codelineno-3-40" name="__codelineno-3-40"></a>            <span class="s2">"utt_id"</span><span class="p">:</span> <span class="n">wav_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+<a href="#__codelineno-3-41" id="__codelineno-3-41" name="__codelineno-3-41"></a>            <span class="s2">"speaker_name"</span><span class="p">:</span> <span class="n">speaker_name</span><span class="p">,</span>
+<a href="#__codelineno-3-42" id="__codelineno-3-42" name="__codelineno-3-42"></a>            <span class="s2">"rate"</span><span class="p">:</span> <span class="n">rate</span><span class="p">,</span>
+<a href="#__codelineno-3-43" id="__codelineno-3-43" name="__codelineno-3-43"></a>        <span class="p">}</span>
+<a href="#__codelineno-3-44" id="__codelineno-3-44" name="__codelineno-3-44"></a>
+<a href="#__codelineno-3-45" id="__codelineno-3-45" name="__codelineno-3-45"></a>        <span class="k">return</span> <span class="n">sample</span>
+<a href="#__codelineno-3-46" id="__codelineno-3-46" name="__codelineno-3-46"></a>
+<a href="#__codelineno-3-47" id="__codelineno-3-47" name="__codelineno-3-47"></a>    <span class="o">...</span>
+</code></pre></div>
+<h3 id="text-to-sequence">Text-to-Sequence</h3>
+<p>Then, the only remaining crucial feature to implement is how we will be converting texts into sequence of IDs. Again, following the original implementation of <code>LibriTTSProcessor</code>, our processor will have two modes: train and eval. For training, we expect our text is training-ready. What I meant by that is, in the metadata file, all texts have been pre-converted into tokens and are separated by whitespaces, for example:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>k a p i n g l i m a n i n d a a k e k a j i SIL
+</code></pre></div>
+<p>Because of that, we would not need to re-separate them and could simply encode/map them to their corresponding IDs via the <code>symbols_to_id</code> method. On the other hand, we would probably want to have a separate behavior for inference purposes.</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/javanese_char.py</span><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nd">@dataclass</span>
+<a href="#__codelineno-5-2" id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="k">class</span> <span class="nc">JavaneseCharacterProcessor</span><span class="p">(</span><span class="n">BaseProcessor</span><span class="p">):</span>
+<a href="#__codelineno-5-3" id="__codelineno-5-3" name="__codelineno-5-3"></a>
+<a href="#__codelineno-5-4" id="__codelineno-5-4" name="__codelineno-5-4"></a>    <span class="o">...</span>
+<a href="#__codelineno-5-5" id="__codelineno-5-5" name="__codelineno-5-5"></a>
+<a href="#__codelineno-5-6" id="__codelineno-5-6" name="__codelineno-5-6"></a>    <span class="k">def</span> <span class="nf">text_to_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<a href="#__codelineno-5-7" id="__codelineno-5-7" name="__codelineno-5-7"></a>        <span class="k">if</span> <span class="p">(</span>
+<a href="#__codelineno-5-8" id="__codelineno-5-8" name="__codelineno-5-8"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"train"</span>
+<a href="#__codelineno-5-9" id="__codelineno-5-9" name="__codelineno-5-9"></a>        <span class="p">):</span>  <span class="c1"># in train mode text should be already transformed to characters</span>
+<a href="#__codelineno-5-10" id="__codelineno-5-10" name="__codelineno-5-10"></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbols_to_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clean_char</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+<a href="#__codelineno-5-11" id="__codelineno-5-11" name="__codelineno-5-11"></a>        <span class="k">else</span><span class="p">:</span>
+<a href="#__codelineno-5-12" id="__codelineno-5-12" name="__codelineno-5-12"></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_text_to_seq</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<a href="#__codelineno-5-13" id="__codelineno-5-13" name="__codelineno-5-13"></a>
+<a href="#__codelineno-5-14" id="__codelineno-5-14" name="__codelineno-5-14"></a>    <span class="k">def</span> <span class="nf">inference_text_to_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<a href="#__codelineno-5-15" id="__codelineno-5-15" name="__codelineno-5-15"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbols_to_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text_to_char</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+<a href="#__codelineno-5-16" id="__codelineno-5-16" name="__codelineno-5-16"></a>
+<a href="#__codelineno-5-17" id="__codelineno-5-17" name="__codelineno-5-17"></a>    <span class="k">def</span> <span class="nf">symbols_to_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbols_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<a href="#__codelineno-5-18" id="__codelineno-5-18" name="__codelineno-5-18"></a>        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol_to_id</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">symbols_list</span><span class="p">]</span>
+<a href="#__codelineno-5-19" id="__codelineno-5-19" name="__codelineno-5-19"></a>
+<a href="#__codelineno-5-20" id="__codelineno-5-20" name="__codelineno-5-20"></a>    <span class="o">...</span>
+</code></pre></div>
+<p>The code above should be relatively self-explanatory. On training mode, we simply split tokens by whitespace, clean them, and encode them as IDs. On inference, we first need to convert texts to characters, and only then encode them as IDs.</p>
+<p>Converting texts to characters is quite straightforward for the case of character-based processors. We would just need to iterate through each characters and that's it! However, for more complex processors that involve g2p conversion, this is probably where you'd want to integrate it. For instance, in <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/processor/english_ipa.py#L179"><code>EnglishIPAProcessor</code></a>, this is where we pass the job to gruut:</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/english_ipa.py</span><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="nd">@dataclass</span>
+<a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="k">class</span> <span class="nc">EnglishIPAProcessor</span><span class="p">(</span><span class="n">BaseProcessor</span><span class="p">):</span>
+<a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a>
+<a href="#__codelineno-6-4" id="__codelineno-6-4" name="__codelineno-6-4"></a>    <span class="o">...</span>
+<a href="#__codelineno-6-5" id="__codelineno-6-5" name="__codelineno-6-5"></a>
+<a href="#__codelineno-6-6" id="__codelineno-6-6" name="__codelineno-6-6"></a>    <span class="k">def</span> <span class="nf">text_to_ph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<a href="#__codelineno-6-7" id="__codelineno-6-7" name="__codelineno-6-7"></a>        <span class="n">phn_arr</span> <span class="o">=</span> <span class="p">[]</span>
+<a href="#__codelineno-6-8" id="__codelineno-6-8" name="__codelineno-6-8"></a>        <span class="k">for</span> <span class="n">words</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<a href="#__codelineno-6-9" id="__codelineno-6-9" name="__codelineno-6-9"></a>            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+<a href="#__codelineno-6-10" id="__codelineno-6-10" name="__codelineno-6-10"></a>                <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">is_major_break</span> <span class="ow">or</span> <span class="n">word</span><span class="o">.</span><span class="n">is_minor_break</span><span class="p">:</span>
+<a href="#__codelineno-6-11" id="__codelineno-6-11" name="__codelineno-6-11"></a>                    <span class="n">phn_arr</span> <span class="o">+=</span> <span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
+<a href="#__codelineno-6-12" id="__codelineno-6-12" name="__codelineno-6-12"></a>                <span class="k">elif</span> <span class="n">word</span><span class="o">.</span><span class="n">phonemes</span><span class="p">:</span>
+<a href="#__codelineno-6-13" id="__codelineno-6-13" name="__codelineno-6-13"></a>                    <span class="n">phn_arr</span> <span class="o">+=</span> <span class="n">word</span><span class="o">.</span><span class="n">phonemes</span>
+<a href="#__codelineno-6-14" id="__codelineno-6-14" name="__codelineno-6-14"></a>
+<a href="#__codelineno-6-15" id="__codelineno-6-15" name="__codelineno-6-15"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_g2p</span><span class="p">(</span><span class="n">phn_arr</span><span class="p">)</span>
+<a href="#__codelineno-6-16" id="__codelineno-6-16" name="__codelineno-6-16"></a>
+<a href="#__codelineno-6-17" id="__codelineno-6-17" name="__codelineno-6-17"></a>    <span class="o">...</span>
+</code></pre></div>
+<p>And finally, we need to implement how we're going to "clean" tokens, namely, separating punctuations from actual character tokens and special tokens (the latter two beginning with an <code>@</code>):</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/javanese_char.py</span><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nd">@dataclass</span>
+<a href="#__codelineno-7-2" id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="k">class</span> <span class="nc">JavaneseCharacterProcessor</span><span class="p">(</span><span class="n">BaseProcessor</span><span class="p">):</span>
+<a href="#__codelineno-7-3" id="__codelineno-7-3" name="__codelineno-7-3"></a>
+<a href="#__codelineno-7-4" id="__codelineno-7-4" name="__codelineno-7-4"></a>    <span class="o">...</span>
+<a href="#__codelineno-7-5" id="__codelineno-7-5" name="__codelineno-7-5"></a>
+<a href="#__codelineno-7-6" id="__codelineno-7-6" name="__codelineno-7-6"></a>    <span class="k">def</span> <span class="nf">clean_char</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">characters</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<a href="#__codelineno-7-7" id="__codelineno-7-7" name="__codelineno-7-7"></a>        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<a href="#__codelineno-7-8" id="__codelineno-7-8" name="__codelineno-7-8"></a>        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">characters</span><span class="p">:</span>
+<a href="#__codelineno-7-9" id="__codelineno-7-9" name="__codelineno-7-9"></a>            <span class="k">if</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">_punctuation</span><span class="p">:</span>
+<a href="#__codelineno-7-10" id="__codelineno-7-10" name="__codelineno-7-10"></a>                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+<a href="#__codelineno-7-11" id="__codelineno-7-11" name="__codelineno-7-11"></a>            <span class="k">elif</span> <span class="n">char</span> <span class="o">!=</span> <span class="s2">" "</span><span class="p">:</span>
+<a href="#__codelineno-7-12" id="__codelineno-7-12" name="__codelineno-7-12"></a>                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"@"</span> <span class="o">+</span> <span class="n">char</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<a href="#__codelineno-7-13" id="__codelineno-7-13" name="__codelineno-7-13"></a>        <span class="k">return</span> <span class="n">data</span>
+</code></pre></div>
+<p>One thing not to miss is adding our new processor class to <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/processor/__init__.py"><code>tensorflow_tts/processor/__init__.py</code></a>:</p>
+<div class="highlight"><span class="filename">tensorflow_tts/processor/__init__.py</span><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">tensorflow_tts.processor.javanese_char</span> <span class="kn">import</span> <span class="n">JavaneseCharacterProcessor</span>
+</code></pre></div>
+<h2 id="preprocess">Preprocess</h2>
+<p>Once you're done with implementing the new processor class, you'll need to also register it to the pre-processor. It's fairly simple to do, with only a few additional lines to add in certain lines:</p>
+<div class="highlight"><span class="filename">tensorflow_tts/bin/preprocess.py</span><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">tensorflow_tts.processor</span> <span class="kn">import</span> <span class="n">JavaneseCharacterProcessor</span>
+<a href="#__codelineno-9-2" id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">tensorflow_tts.processor.javanese_char</span> <span class="kn">import</span> <span class="n">JAVANESE_CHARACTER_SYMBOLS</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">tensorflow_tts/bin/preprocess.py</span><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="w"> </span>   ...<span class="w"></span>
+<a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a>
+<a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="w"> </span>   parser.add_argument(<span class="w"></span>
+<a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w"> </span>       "--dataset",<span class="w"></span>
+<a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="w"> </span>       type=str,<span class="w"></span>
+<a href="#__codelineno-10-6" id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="w"> </span>       default="ljspeech",<span class="w"></span>
+<a href="#__codelineno-10-7" id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="w"> </span>       choices=[<span class="w"></span>
+<a href="#__codelineno-10-8" id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="w"> </span>           "ljspeech",<span class="w"></span>
+<a href="#__codelineno-10-9" id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="w"> </span>           "ljspeech_multi",<span class="w"></span>
+<a href="#__codelineno-10-10" id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="w"> </span>           "kss",<span class="w"></span>
+<a href="#__codelineno-10-11" id="__codelineno-10-11" name="__codelineno-10-11"></a><span class="w"> </span>           "libritts",<span class="w"></span>
+<a href="#__codelineno-10-12" id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="w"> </span>           "baker",<span class="w"></span>
+<a href="#__codelineno-10-13" id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="w"> </span>           "thorsten",<span class="w"></span>
+<a href="#__codelineno-10-14" id="__codelineno-10-14" name="__codelineno-10-14"></a><span class="w"> </span>           "ljspeechu",<span class="w"></span>
+<a href="#__codelineno-10-15" id="__codelineno-10-15" name="__codelineno-10-15"></a><span class="w"> </span>           "synpaflex",<span class="w"></span>
+<a href="#__codelineno-10-16" id="__codelineno-10-16" name="__codelineno-10-16"></a><span class="w"> </span>           "jsut",<span class="w"></span>
+<a href="#__codelineno-10-17" id="__codelineno-10-17" name="__codelineno-10-17"></a><span class="w"> </span>           "indonesianipa",<span class="w"></span>
+<a href="#__codelineno-10-18" id="__codelineno-10-18" name="__codelineno-10-18"></a><span class="w"> </span>           "englishipa",<span class="w"></span>
+<a href="#__codelineno-10-19" id="__codelineno-10-19" name="__codelineno-10-19"></a><span class="gi">+           "javanesechar", # what we're going to call our processor</span><span class="w"></span>
+<a href="#__codelineno-10-20" id="__codelineno-10-20" name="__codelineno-10-20"></a><span class="w"> </span>       ],<span class="w"></span>
+<a href="#__codelineno-10-21" id="__codelineno-10-21" name="__codelineno-10-21"></a><span class="w"> </span>       help="Dataset to preprocess.",<span class="w"></span>
+<a href="#__codelineno-10-22" id="__codelineno-10-22" name="__codelineno-10-22"></a><span class="w"> </span>   )<span class="w"></span>
+<a href="#__codelineno-10-23" id="__codelineno-10-23" name="__codelineno-10-23"></a>
+<a href="#__codelineno-10-24" id="__codelineno-10-24" name="__codelineno-10-24"></a><span class="w">...</span>
+<a href="#__codelineno-10-25" id="__codelineno-10-25" name="__codelineno-10-25"></a>
+<a href="#__codelineno-10-26" id="__codelineno-10-26" name="__codelineno-10-26"></a><span class="w">def preprocess():</span>
+<a href="#__codelineno-10-27" id="__codelineno-10-27" name="__codelineno-10-27"></a><span class="w"> </span>   """Run preprocessing process and compute statistics for normalizing."""<span class="w"></span>
+<a href="#__codelineno-10-28" id="__codelineno-10-28" name="__codelineno-10-28"></a><span class="w"> </span>   config = parse_and_config()<span class="w"></span>
+<a href="#__codelineno-10-29" id="__codelineno-10-29" name="__codelineno-10-29"></a>
+<a href="#__codelineno-10-30" id="__codelineno-10-30" name="__codelineno-10-30"></a><span class="w"> </span>   dataset_processor = {<span class="w"></span>
+<a href="#__codelineno-10-31" id="__codelineno-10-31" name="__codelineno-10-31"></a><span class="w"> </span>       "ljspeech": LJSpeechProcessor,<span class="w"></span>
+<a href="#__codelineno-10-32" id="__codelineno-10-32" name="__codelineno-10-32"></a><span class="w"> </span>       "ljspeech_multi": LJSpeechMultiProcessor,<span class="w"></span>
+<a href="#__codelineno-10-33" id="__codelineno-10-33" name="__codelineno-10-33"></a><span class="w"> </span>       "kss": KSSProcessor,<span class="w"></span>
+<a href="#__codelineno-10-34" id="__codelineno-10-34" name="__codelineno-10-34"></a><span class="w"> </span>       "libritts": LibriTTSProcessor,<span class="w"></span>
+<a href="#__codelineno-10-35" id="__codelineno-10-35" name="__codelineno-10-35"></a><span class="w"> </span>       "baker": BakerProcessor,<span class="w"></span>
+<a href="#__codelineno-10-36" id="__codelineno-10-36" name="__codelineno-10-36"></a><span class="w"> </span>       "thorsten": ThorstenProcessor,<span class="w"></span>
+<a href="#__codelineno-10-37" id="__codelineno-10-37" name="__codelineno-10-37"></a><span class="w"> </span>       "ljspeechu": LJSpeechUltimateProcessor,<span class="w"></span>
+<a href="#__codelineno-10-38" id="__codelineno-10-38" name="__codelineno-10-38"></a><span class="w"> </span>       "synpaflex": SynpaflexProcessor,<span class="w"></span>
+<a href="#__codelineno-10-39" id="__codelineno-10-39" name="__codelineno-10-39"></a><span class="w"> </span>       "jsut": JSUTProcessor,<span class="w"></span>
+<a href="#__codelineno-10-40" id="__codelineno-10-40" name="__codelineno-10-40"></a><span class="w"> </span>       "indonesianipa": IndonesianIPAProcessor,<span class="w"></span>
+<a href="#__codelineno-10-41" id="__codelineno-10-41" name="__codelineno-10-41"></a><span class="w"> </span>       "englishipa": EnglishIPAProcessor,<span class="w"></span>
+<a href="#__codelineno-10-42" id="__codelineno-10-42" name="__codelineno-10-42"></a><span class="gi">+       "javanesechar": JavaneseCharacterProcessor,</span><span class="w"></span>
+<a href="#__codelineno-10-43" id="__codelineno-10-43" name="__codelineno-10-43"></a><span class="w"> </span>   }<span class="w"></span>
+<a href="#__codelineno-10-44" id="__codelineno-10-44" name="__codelineno-10-44"></a>
+<a href="#__codelineno-10-45" id="__codelineno-10-45" name="__codelineno-10-45"></a><span class="w"> </span>   dataset_symbol = {<span class="w"></span>
+<a href="#__codelineno-10-46" id="__codelineno-10-46" name="__codelineno-10-46"></a><span class="w"> </span>       "ljspeech": LJSPEECH_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-47" id="__codelineno-10-47" name="__codelineno-10-47"></a><span class="w"> </span>       "ljspeech_multi": LJSPEECH_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-48" id="__codelineno-10-48" name="__codelineno-10-48"></a><span class="w"> </span>       "kss": KSS_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-49" id="__codelineno-10-49" name="__codelineno-10-49"></a><span class="w"> </span>       "libritts": LIBRITTS_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-50" id="__codelineno-10-50" name="__codelineno-10-50"></a><span class="w"> </span>       "baker": BAKER_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-51" id="__codelineno-10-51" name="__codelineno-10-51"></a><span class="w"> </span>       "thorsten": THORSTEN_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-52" id="__codelineno-10-52" name="__codelineno-10-52"></a><span class="w"> </span>       "ljspeechu": LJSPEECH_U_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-53" id="__codelineno-10-53" name="__codelineno-10-53"></a><span class="w"> </span>       "synpaflex": SYNPAFLEX_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-54" id="__codelineno-10-54" name="__codelineno-10-54"></a><span class="w"> </span>       "jsut": JSUT_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-55" id="__codelineno-10-55" name="__codelineno-10-55"></a><span class="w"> </span>       "indonesianipa": INDONESIAN_IPA_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-56" id="__codelineno-10-56" name="__codelineno-10-56"></a><span class="w"> </span>       "englishipa": ENGLISH_IPA_SYMBOLS,<span class="w"></span>
+<a href="#__codelineno-10-57" id="__codelineno-10-57" name="__codelineno-10-57"></a><span class="gi">+       "javanesechar": JAVANESE_CHARACTER_SYMBOLS,</span><span class="w"></span>
+<a href="#__codelineno-10-58" id="__codelineno-10-58" name="__codelineno-10-58"></a><span class="w"> </span>   }<span class="w"></span>
+<a href="#__codelineno-10-59" id="__codelineno-10-59" name="__codelineno-10-59"></a>
+<a href="#__codelineno-10-60" id="__codelineno-10-60" name="__codelineno-10-60"></a><span class="w"> </span>   dataset_cleaner = {<span class="w"></span>
+<a href="#__codelineno-10-61" id="__codelineno-10-61" name="__codelineno-10-61"></a><span class="w"> </span>       "ljspeech": "english_cleaners",<span class="w"></span>
+<a href="#__codelineno-10-62" id="__codelineno-10-62" name="__codelineno-10-62"></a><span class="w"> </span>       "ljspeech_multi": "english_cleaners",<span class="w"></span>
+<a href="#__codelineno-10-63" id="__codelineno-10-63" name="__codelineno-10-63"></a><span class="w"> </span>       "kss": "korean_cleaners",<span class="w"></span>
+<a href="#__codelineno-10-64" id="__codelineno-10-64" name="__codelineno-10-64"></a><span class="w"> </span>       "libritts": None,<span class="w"></span>
+<a href="#__codelineno-10-65" id="__codelineno-10-65" name="__codelineno-10-65"></a><span class="w"> </span>       "baker": None,<span class="w"></span>
+<a href="#__codelineno-10-66" id="__codelineno-10-66" name="__codelineno-10-66"></a><span class="w"> </span>       "thorsten": "german_cleaners",<span class="w"></span>
+<a href="#__codelineno-10-67" id="__codelineno-10-67" name="__codelineno-10-67"></a><span class="w"> </span>       "ljspeechu": "english_cleaners",<span class="w"></span>
+<a href="#__codelineno-10-68" id="__codelineno-10-68" name="__codelineno-10-68"></a><span class="w"> </span>       "synpaflex": "basic_cleaners",<span class="w"></span>
+<a href="#__codelineno-10-69" id="__codelineno-10-69" name="__codelineno-10-69"></a><span class="w"> </span>       "jsut": None,<span class="w"></span>
+<a href="#__codelineno-10-70" id="__codelineno-10-70" name="__codelineno-10-70"></a><span class="w"> </span>       "indonesianipa": None,<span class="w"></span>
+<a href="#__codelineno-10-71" id="__codelineno-10-71" name="__codelineno-10-71"></a><span class="w"> </span>       "englishipa": None,<span class="w"></span>
+<a href="#__codelineno-10-72" id="__codelineno-10-72" name="__codelineno-10-72"></a><span class="gi">+       "javanesechar": None,</span><span class="w"></span>
+<a href="#__codelineno-10-73" id="__codelineno-10-73" name="__codelineno-10-73"></a><span class="w"> </span>   }<span class="w"></span>
+</code></pre></div>
+<h2 id="integrating-with-text2mel-models">Integrating with text2mel Models</h2>
+<p>Lastly, we need to integrate our processor with existing text2mel models, such as <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/configs/fastspeech.py">FastSpeech2</a>. The number of tokens in the processor will be used as the vocabulary size of the text2mel model.</p>
+<div class="highlight"><span class="filename">tensorflow_tts/configs/fastspeech.py</span><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">tensorflow_tts.processor.javanese_char</span> <span class="kn">import</span> <span class="p">(</span>
+<a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a>    <span class="n">JAVANESE_CHARACTER_SYMBOLS</span> <span class="k">as</span> <span class="n">javanese_char_symbols</span><span class="p">,</span>
+<a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">tensorflow_tts/configs/fastspeech.py</span><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="w"> </span>       ...<span class="w"></span>
+<a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a>
+<a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="w"> </span>       if dataset == "ljspeech":<span class="w"></span>
+<a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="w"> </span>           self.vocab_size = vocab_size<span class="w"></span>
+<a href="#__codelineno-12-5" id="__codelineno-12-5" name="__codelineno-12-5"></a><span class="w"> </span>       elif dataset == "kss":<span class="w"></span>
+<a href="#__codelineno-12-6" id="__codelineno-12-6" name="__codelineno-12-6"></a><span class="w"> </span>           self.vocab_size = len(kss_symbols)<span class="w"></span>
+<a href="#__codelineno-12-7" id="__codelineno-12-7" name="__codelineno-12-7"></a><span class="w"> </span>       elif dataset == "baker":<span class="w"></span>
+<a href="#__codelineno-12-8" id="__codelineno-12-8" name="__codelineno-12-8"></a><span class="w"> </span>           self.vocab_size = len(bk_symbols)<span class="w"></span>
+<a href="#__codelineno-12-9" id="__codelineno-12-9" name="__codelineno-12-9"></a><span class="w"> </span>       elif dataset == "libritts":<span class="w"></span>
+<a href="#__codelineno-12-10" id="__codelineno-12-10" name="__codelineno-12-10"></a><span class="w"> </span>           self.vocab_size = len(lbri_symbols)<span class="w"></span>
+<a href="#__codelineno-12-11" id="__codelineno-12-11" name="__codelineno-12-11"></a><span class="w"> </span>       elif dataset == "jsut":<span class="w"></span>
+<a href="#__codelineno-12-12" id="__codelineno-12-12" name="__codelineno-12-12"></a><span class="w"> </span>           self.vocab_size = len(jsut_symbols)<span class="w"></span>
+<a href="#__codelineno-12-13" id="__codelineno-12-13" name="__codelineno-12-13"></a><span class="w"> </span>       elif dataset == "ljspeechu":<span class="w"></span>
+<a href="#__codelineno-12-14" id="__codelineno-12-14" name="__codelineno-12-14"></a><span class="w"> </span>           self.vocab_size = len(lju_symbols)<span class="w"></span>
+<a href="#__codelineno-12-15" id="__codelineno-12-15" name="__codelineno-12-15"></a><span class="w"> </span>       elif dataset == "indonesianipa":<span class="w"></span>
+<a href="#__codelineno-12-16" id="__codelineno-12-16" name="__codelineno-12-16"></a><span class="w"> </span>           self.vocab_size = len(indonesian_ipa_symbols)<span class="w"></span>
+<a href="#__codelineno-12-17" id="__codelineno-12-17" name="__codelineno-12-17"></a><span class="w"> </span>       elif dataset == "englishipa":<span class="w"></span>
+<a href="#__codelineno-12-18" id="__codelineno-12-18" name="__codelineno-12-18"></a><span class="w"> </span>           self.vocab_size = len(english_ipa_symbols)<span class="w"></span>
+<a href="#__codelineno-12-19" id="__codelineno-12-19" name="__codelineno-12-19"></a><span class="gi">+       elif dataset == "javanesechar":</span><span class="w"></span>
+<a href="#__codelineno-12-20" id="__codelineno-12-20" name="__codelineno-12-20"></a><span class="gi">+           self.vocab_size = len(javanese_char_symbols)</span><span class="w"></span>
+<a href="#__codelineno-12-21" id="__codelineno-12-21" name="__codelineno-12-21"></a><span class="w"> </span>       else:<span class="w"></span>
+<a href="#__codelineno-12-22" id="__codelineno-12-22" name="__codelineno-12-22"></a><span class="w"> </span>           raise ValueError("No such dataset: {}".format(dataset))<span class="w"></span>
+<a href="#__codelineno-12-23" id="__codelineno-12-23" name="__codelineno-12-23"></a>
+<a href="#__codelineno-12-24" id="__codelineno-12-24" name="__codelineno-12-24"></a><span class="w"> </span>       ...<span class="w"></span>
+</code></pre></div>
+<h2 id="autoprocessor">AutoProcessor</h2>
+<p>A handy feature found in TensorFlowTTS is the ability to load processors from HuggingFace Hub. This allows you to do something like:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">tensorflow_tts.inference</span> <span class="kn">import</span> <span class="n">AutoProcessor</span>
+<a href="#__codelineno-13-2" id="__codelineno-13-2" name="__codelineno-13-2"></a>
+<a href="#__codelineno-13-3" id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="n">processor</span> <span class="o">=</span> <span class="n">AutoProcessor</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"bookbot/lightspeech-mfa-id"</span><span class="p">)</span>
+</code></pre></div>
+<p>To allow such support for our custom processor, we simply have to add it to <a href="https://github.com/w11wo/TensorFlowTTS/blob/master/tensorflow_tts/inference/auto_processor.py"><code>tensorflow_tts/inference/auto_processor.py</code></a>:</p>
+<div class="highlight"><span class="filename">tensorflow_tts/inference/auto_processor.py</span><pre><span></span><code><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="w">from tensorflow_tts.processor import (</span>
+<a href="#__codelineno-14-2" id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="w"> </span>   LJSpeechProcessor,<span class="w"></span>
+<a href="#__codelineno-14-3" id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="w"> </span>   KSSProcessor,<span class="w"></span>
+<a href="#__codelineno-14-4" id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="w"> </span>   BakerProcessor,<span class="w"></span>
+<a href="#__codelineno-14-5" id="__codelineno-14-5" name="__codelineno-14-5"></a><span class="w"> </span>   LibriTTSProcessor,<span class="w"></span>
+<a href="#__codelineno-14-6" id="__codelineno-14-6" name="__codelineno-14-6"></a><span class="w"> </span>   ThorstenProcessor,<span class="w"></span>
+<a href="#__codelineno-14-7" id="__codelineno-14-7" name="__codelineno-14-7"></a><span class="w"> </span>   LJSpeechUltimateProcessor,<span class="w"></span>
+<a href="#__codelineno-14-8" id="__codelineno-14-8" name="__codelineno-14-8"></a><span class="w"> </span>   SynpaflexProcessor,<span class="w"></span>
+<a href="#__codelineno-14-9" id="__codelineno-14-9" name="__codelineno-14-9"></a><span class="w"> </span>   JSUTProcessor,<span class="w"></span>
+<a href="#__codelineno-14-10" id="__codelineno-14-10" name="__codelineno-14-10"></a><span class="w"> </span>   LJSpeechMultiProcessor,<span class="w"></span>
+<a href="#__codelineno-14-11" id="__codelineno-14-11" name="__codelineno-14-11"></a><span class="w"> </span>   IndonesianIPAProcessor,<span class="w"></span>
+<a href="#__codelineno-14-12" id="__codelineno-14-12" name="__codelineno-14-12"></a><span class="w"> </span>   EnglishIPAProcessor,<span class="w"></span>
+<a href="#__codelineno-14-13" id="__codelineno-14-13" name="__codelineno-14-13"></a><span class="gi">+   JavaneseCharacterProcessor,</span><span class="w"></span>
+<a href="#__codelineno-14-14" id="__codelineno-14-14" name="__codelineno-14-14"></a><span class="w">)</span>
+<a href="#__codelineno-14-15" id="__codelineno-14-15" name="__codelineno-14-15"></a>
+<a href="#__codelineno-14-16" id="__codelineno-14-16" name="__codelineno-14-16"></a><span class="w">from tensorflow_tts.utils import CACHE_DIRECTORY, PROCESSOR_FILE_NAME, LIBRARY_NAME</span>
+<a href="#__codelineno-14-17" id="__codelineno-14-17" name="__codelineno-14-17"></a><span class="w">from tensorflow_tts import __version__ as VERSION</span>
+<a href="#__codelineno-14-18" id="__codelineno-14-18" name="__codelineno-14-18"></a><span class="w">from huggingface_hub import hf_hub_url, cached_download</span>
+<a href="#__codelineno-14-19" id="__codelineno-14-19" name="__codelineno-14-19"></a>
+<a href="#__codelineno-14-20" id="__codelineno-14-20" name="__codelineno-14-20"></a><span class="w">CONFIG_MAPPING = OrderedDict(</span>
+<a href="#__codelineno-14-21" id="__codelineno-14-21" name="__codelineno-14-21"></a><span class="w"> </span>   [<span class="w"></span>
+<a href="#__codelineno-14-22" id="__codelineno-14-22" name="__codelineno-14-22"></a><span class="w"> </span>       ("LJSpeechProcessor", LJSpeechProcessor),<span class="w"></span>
+<a href="#__codelineno-14-23" id="__codelineno-14-23" name="__codelineno-14-23"></a><span class="w"> </span>       ("LJSpeechMultiProcessor", LJSpeechMultiProcessor),<span class="w"></span>
+<a href="#__codelineno-14-24" id="__codelineno-14-24" name="__codelineno-14-24"></a><span class="w"> </span>       ("KSSProcessor", KSSProcessor),<span class="w"></span>
+<a href="#__codelineno-14-25" id="__codelineno-14-25" name="__codelineno-14-25"></a><span class="w"> </span>       ("BakerProcessor", BakerProcessor),<span class="w"></span>
+<a href="#__codelineno-14-26" id="__codelineno-14-26" name="__codelineno-14-26"></a><span class="w"> </span>       ("LibriTTSProcessor", LibriTTSProcessor),<span class="w"></span>
+<a href="#__codelineno-14-27" id="__codelineno-14-27" name="__codelineno-14-27"></a><span class="w"> </span>       ("ThorstenProcessor", ThorstenProcessor),<span class="w"></span>
+<a href="#__codelineno-14-28" id="__codelineno-14-28" name="__codelineno-14-28"></a><span class="w"> </span>       ("LJSpeechUltimateProcessor", LJSpeechUltimateProcessor),<span class="w"></span>
+<a href="#__codelineno-14-29" id="__codelineno-14-29" name="__codelineno-14-29"></a><span class="w"> </span>       ("SynpaflexProcessor", SynpaflexProcessor),<span class="w"></span>
+<a href="#__codelineno-14-30" id="__codelineno-14-30" name="__codelineno-14-30"></a><span class="w"> </span>       ("JSUTProcessor", JSUTProcessor),<span class="w"></span>
+<a href="#__codelineno-14-31" id="__codelineno-14-31" name="__codelineno-14-31"></a><span class="w"> </span>       ("IndonesianIPAProcessor", IndonesianIPAProcessor),<span class="w"></span>
+<a href="#__codelineno-14-32" id="__codelineno-14-32" name="__codelineno-14-32"></a><span class="w"> </span>       ("EnglishIPAProcessor", EnglishIPAProcessor),<span class="w"></span>
+<a href="#__codelineno-14-33" id="__codelineno-14-33" name="__codelineno-14-33"></a><span class="gi">+       ("JavaneseCharacterProcessor", JavaneseCharacterProcessor),</span><span class="w"></span>
+<a href="#__codelineno-14-34" id="__codelineno-14-34" name="__codelineno-14-34"></a><span class="w"> </span>   ]<span class="w"></span>
+<a href="#__codelineno-14-35" id="__codelineno-14-35" name="__codelineno-14-35"></a><span class="w">)</span>
+</code></pre></div>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Convert and Infer Models on TensorFlowLite" class="md-footer__link md-footer__link--prev" href="../tensorflowlite/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Convert and Infer Models on TensorFlowLite
+            </div>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+<script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+<script src="../../javascripts/tablesort.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>
