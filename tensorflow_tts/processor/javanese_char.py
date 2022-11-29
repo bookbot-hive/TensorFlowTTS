@@ -125,7 +125,7 @@ class JavaneseCharacterProcessor(BaseProcessor):
             return self.inference_text_to_seq(text)
 
     def inference_text_to_seq(self, text: str):
-        return self.symbols_to_ids(self.text_to_char(text))
+        return self.symbols_to_ids(self.text_to_char(text.lower()))
 
     def symbols_to_ids(self, symbols_list: list):
         return [self.symbol_to_id[s] for s in symbols_list]
@@ -139,5 +139,5 @@ class JavaneseCharacterProcessor(BaseProcessor):
             if char in _punctuation:
                 data.append(char)
             elif char != " ":
-                data.append("@" + char.lower())
+                data.append("@" + char)
         return data
