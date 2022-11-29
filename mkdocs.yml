@@ -70,3 +70,4 @@ nav:
           - Training: guides/lightspeech-mbmelgan/training.md
           - Inference: guides/lightspeech-mbmelgan/inference.md
       - Convert and Infer Models on TensorFlowLite: guides/tensorflowlite.md
+      - Implementing Custom Processor: guides/custom_processor.md
