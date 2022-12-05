@@ -12,6 +12,7 @@
 | [FastSpeech2 MFA EN ESD Angry](https://huggingface.co/bookbot/fastspeech2-mfa-en-esd-angry) | 44.10    | gruut (IPA)     | Emotional Speech Dataset - Angry |
 | [LightSpeech MFA EN](https://huggingface.co/bookbot/lightspeech-mfa-en)                     | 44.10    | gruut (IPA)     | Azure (Mastered)                 |
 | [LightSpeech MFA EN v2](https://huggingface.co/bookbot/lightspeech-mfa-en-v2)               | 44.10    | gruut (IPA)     | Azure (Mastered)                 |
+| [LightSpeech MFA EN v3](https://huggingface.co/bookbot/lightspeech-mfa-en-v3)               | 44.10    | gruut (IPA)     | Azure (Mastered)                 |
 | [LightSpeech MFA EN ESD](https://huggingface.co/bookbot/lightspeech-mfa-en-esd)             | 44.10    | gruut (IPA)     | Emotional Speech Dataset - 0013  |
 
 
