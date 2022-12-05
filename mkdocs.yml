@@ -62,6 +62,7 @@ nav:
   - Model Zoo:
       - English: models/english.md
       - Indonesian: models/indonesian.md
+      - Javanese: models/javanese.md
   - Guides:
       - Train LightSpeech & Multi-band MelGAN:
           - Introduction: guides/lightspeech-mbmelgan/intro.md
