@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<link href="https://w11wo.github.io/TensorFlowTTS/guides/british_english_gruut/" rel="canonical"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.4.2, mkdocs-material-8.5.10" name="generator"/>
+<title>Adding British English Support to gruut - Text-to-Speech with TensorFlowTTS</title>
+<link href="../../assets/stylesheets/main.472b142f.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.08040f6c.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            
+                .gscrollbar-fixer { padding-right: 15px; }
+                .gdesc-inner { font-size: 0.75rem; }
+                body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+                body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+                body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+                </style><script src="../../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="deep-orange" data-md-color-primary="deep-orange" data-md-color-scheme="default" dir="ltr">
+<script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#adding-british-english-support-to-gruut">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Text-to-Speech with TensorFlowTTS" class="md-header__button md-logo" data-md-component="logo" href="../.." title="Text-to-Speech with TensorFlowTTS">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Text-to-Speech with TensorFlowTTS
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Adding British English Support to gruut
+            
+          </span>
+</div>
+</div>
+</div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="deep-orange" data-md-color-scheme="default" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_2" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="deep-orange" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="deep-orange" data-md-color-scheme="slate" id="__palette_2" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"></path></svg>
+</label>
+</form>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/w11wo/TensorFlowTTS" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Text-to-Speech with TensorFlowTTS" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="Text-to-Speech with TensorFlowTTS">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
+</a>
+    Text-to-Speech with TensorFlowTTS
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/w11wo/TensorFlowTTS" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../..">
+        Home
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../installation/">
+        Installation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="https://huggingface.co/spaces/bookbot/Text-to-Speech-Playground">
+        Live Demo
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" id="__nav_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_4">
+          Audio Samples
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Audio Samples" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_4">
+<span class="md-nav__icon md-icon"></span>
+          Audio Samples
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../results/english/">
+        English
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../results/indonesian/">
+        Indonesian
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" id="__nav_5" type="checkbox"/>
+<label class="md-nav__link" for="__nav_5">
+          Model Zoo
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Model Zoo" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_5">
+<span class="md-nav__icon md-icon"></span>
+          Model Zoo
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../models/english/">
+        English
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../models/indonesian/">
+        Indonesian
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../models/javanese/">
+        Javanese
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" id="__nav_6" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Guides" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_6">
+<span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_1" id="__nav_6_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_6_1">
+          Train LightSpeech &amp; Multi-band MelGAN
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-label="Train LightSpeech &amp; Multi-band MelGAN" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_6_1">
+<span class="md-nav__icon md-icon"></span>
+          Train LightSpeech &amp; Multi-band MelGAN
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/intro/">
+        Introduction
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/dataset/">
+        Dataset
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/duration-extraction/">
+        Duration Extraction
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/training/">
+        Training
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../lightspeech-mbmelgan/inference/">
+        Inference
+      </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../tensorflowlite/">
+        Convert and Infer Models on TensorFlowLite
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../custom_processor/">
+        Implementing Custom Processor
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Adding British English Support to gruut
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Adding British English Support to gruut
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#installation">
+    Installation
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#corpus">
+    Corpus
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#building-a-lexicon">
+    Building a Lexicon
+  </a>
+<nav aria-label="Building a Lexicon" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#lexicon-database">
+    Lexicon Database
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#g2p-model">
+    G2P Model
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-into-gruut">
+    Integrating into gruut
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#test">
+    Test
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#installation">
+    Installation
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#corpus">
+    Corpus
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#building-a-lexicon">
+    Building a Lexicon
+  </a>
+<nav aria-label="Building a Lexicon" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#lexicon-database">
+    Lexicon Database
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#g2p-model">
+    G2P Model
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#integrating-into-gruut">
+    Integrating into gruut
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#test">
+    Test
+  </a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/w11wo/TensorFlowTTS/edit/master/docs/guides/british_english_gruut.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
+</a>
+<h1 id="adding-british-english-support-to-gruut">Adding British English Support to gruut</h1>
+<p>Everything here can be followed along in Google Colab!</p>
+<p align="center">
+<a href="https://colab.research.google.com/drive/1UK_-nUZnRyRZSz9Hz3NUdf-J_BuI5Rpt?usp=sharing">
+<img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/>
+</a>
+</p>
+<p><a href="https://github.com/rhasspy/gruut/">gruut</a> is a very awesome grapheme-to-phoneme converter for English, and it also includes additional goodies such as a text processor that further handles numbers, abbreviations, and other intricate details. This is why gruut was an excellent choice when we wanted to implement a custom IPA processor for English.</p>
+<p>One missing feature, however, is the ability to phonemize British English. As of the time of writing, gruut only supports American English. <a href="https://github.com/rhasspy/gruut/issues/29">Several users</a>, myself included, would love to see it implemented with a similar API that we know and love. But seeing how the project has not been updated since June 2022, it looks like our only choice is to implement it ourselves -- which is what we're going to do today. Follow along as we integrate <a href="https://github.com/espeak-ng/espeak-ng">espeak-ng</a>'s British English g2p into gruut. A fork that implements these changes can be found <a href="https://github.com/w11wo/gruut">here</a>.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>A lot of the steps here are based on the <a href="https://rhasspy.github.io/gruut/#adding-a-new-language">official guide</a> which also seems to be outdated.</p>
+</div>
+<p>To start, we need to install <code>espeak-ng</code>, <code>gruut</code>, <code>phonetisaurus</code>, and clone the gruut repository as well. We can do these via the command line.</p>
+<h2 id="installation">Installation</h2>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="err">!</span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">q</span> <span class="n">install</span> <span class="n">espeak</span><span class="o">-</span><span class="n">ng</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Reading package lists...
+Building dependency tree...
+Reading state information...
+The following package was automatically installed and is no longer required:
+  libnvidia-common-460
+Use 'apt autoremove' to remove it.
+The following additional packages will be installed:
+  espeak-ng-data libespeak-ng1 libpcaudio0 libsonic0
+The following NEW packages will be installed:
+  espeak-ng espeak-ng-data libespeak-ng1 libpcaudio0 libsonic0
+0 upgraded, 5 newly installed, 0 to remove and 20 not upgraded.
+Need to get 3,957 kB of archives.
+After this operation, 10.9 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu bionic/main amd64 libpcaudio0 amd64 1.0-1 [6,536 B]
+Get:2 http://archive.ubuntu.com/ubuntu bionic/main amd64 libsonic0 amd64 0.2.0-6 [13.4 kB]
+Get:3 http://archive.ubuntu.com/ubuntu bionic/main amd64 espeak-ng-data amd64 1.49.2+dfsg-1 [3,469 kB]
+Get:4 http://archive.ubuntu.com/ubuntu bionic/main amd64 libespeak-ng1 amd64 1.49.2+dfsg-1 [187 kB]
+Get:5 http://archive.ubuntu.com/ubuntu bionic/universe amd64 espeak-ng amd64 1.49.2+dfsg-1 [282 kB]
+Fetched 3,957 kB in 1s (3,165 kB/s)
+Selecting previously unselected package libpcaudio0.
+(Reading database ... 124013 files and directories currently installed.)
+Preparing to unpack .../libpcaudio0_1.0-1_amd64.deb ...
+Unpacking libpcaudio0 (1.0-1) ...
+Selecting previously unselected package libsonic0:amd64.
+Preparing to unpack .../libsonic0_0.2.0-6_amd64.deb ...
+Unpacking libsonic0:amd64 (0.2.0-6) ...
+Selecting previously unselected package espeak-ng-data:amd64.
+Preparing to unpack .../espeak-ng-data_1.49.2+dfsg-1_amd64.deb ...
+Unpacking espeak-ng-data:amd64 (1.49.2+dfsg-1) ...
+Selecting previously unselected package libespeak-ng1:amd64.
+Preparing to unpack .../libespeak-ng1_1.49.2+dfsg-1_amd64.deb ...
+Unpacking libespeak-ng1:amd64 (1.49.2+dfsg-1) ...
+Selecting previously unselected package espeak-ng.
+Preparing to unpack .../espeak-ng_1.49.2+dfsg-1_amd64.deb ...
+Unpacking espeak-ng (1.49.2+dfsg-1) ...
+Setting up libsonic0:amd64 (0.2.0-6) ...
+Setting up libpcaudio0 (1.0-1) ...
+Setting up espeak-ng-data:amd64 (1.49.2+dfsg-1) ...
+Setting up libespeak-ng1:amd64 (1.49.2+dfsg-1) ...
+Setting up espeak-ng (1.49.2+dfsg-1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.6) ...
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">gruut</span> <span class="n">phonetisaurus</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>|████████████████████████████████| 74 kB 1.8 MB/s 
+|████████████████████████████████| 12.1 MB 11.2 MB/s 
+|████████████████████████████████| 292 kB 63.3 MB/s 
+|████████████████████████████████| 101 kB 9.6 MB/s 
+|████████████████████████████████| 15.2 MB 15.4 MB/s 
+|████████████████████████████████| 125 kB 54.2 MB/s 
+|████████████████████████████████| 1.0 MB 60.4 MB/s 
+Building wheel for gruut (setup.py) ... done
+Building wheel for gruut-ipa (setup.py) ... done
+Building wheel for gruut-lang-en (setup.py) ... done
+Building wheel for docopt (setup.py) ... done
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="err">!</span><span class="n">git</span> <span class="n">clone</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">rhasspy</span><span class="o">/</span><span class="n">gruut</span><span class="o">.</span><span class="n">git</span>
+</code></pre></div>
+<h2 id="corpus">Corpus</h2>
+<p>The first thing we have to decide is the corpus. What words do we want to include in the lexicon? For simplicity's sake, I chose to grab all words in the current American English lexicon, and hence make a British "counterpart" of it. Since all words are stored in a SQLite database, we just need to connect into the database via the <code>sqlite3</code> library provided in Python.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">sqlite3</span>
+<a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="n">con</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"gruut/gruut-lang-en/gruut_lang_en/lexicon.db"</span><span class="p">)</span>
+<a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</code></pre></div>
+<p>After making a connection into the database and creating a cursor, we can then query all words in the database.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="n">words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT word FROM word_phonemes"</span><span class="p">)])))</span>
+<a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="n">words</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>['a', "a's", 'a.m.', 'aaberg', 'aachen']
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-5-1" id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>124392
+</code></pre></div>
+<p>Then, we just need to write each word into a plain textfile, each separated by a newline break.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-6-1" id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"words.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a href="#__codelineno-6-2" id="__codelineno-6-2" name="__codelineno-6-2"></a>    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+<a href="#__codelineno-6-3" id="__codelineno-6-3" name="__codelineno-6-3"></a>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">word</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>A quick check of the results:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-7-1" id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="err">!</span><span class="n">head</span> <span class="n">words</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>a
+a's
+a.m.
+aaberg
+aachen
+aachener
+aah
+aaker
+aaliyah
+aalseth
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-8-1" id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="err">!</span><span class="n">tail</span> <span class="n">words</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>zynda
+zysk
+zyskowski
+zyuganov
+zyuganov's
+zywicki
+éabha
+órla
+órlagh
+šerbedžija
+</code></pre></div>
+<h2 id="building-a-lexicon">Building a Lexicon</h2>
+<p>Now that we have a list of words (corpus), we can simply use the pre-provided <code>espeak_word.sh</code> script that conveniently reads the list of words in a plain textfile and writes out a lexicon. The lexicon will contain the word, and its corresponding IPA phonemes. In our case, these phonemes are generated by <code>espeak-ng</code>, specifically the <code>en-gb</code> voice.</p>
+<p>Notice that we also have to pass the argument <code>pos</code>, such that the lexicon will also contain the word's part-of-speech (POS) tag. This will help identify if a homograph is a noun, or a verb, or is of other POS tag. We will see later how this would be integrated into the resultant lexicon database.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-9-1" id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="err">!</span><span class="n">bash</span> <span class="n">gruut</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">espeak_word</span><span class="o">.</span><span class="n">sh</span> <span class="n">en</span><span class="o">-</span><span class="n">gb</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">words</span><span class="o">.</span><span class="n">txt</span> <span class="o">&gt;</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<p>After about 3-4 hours of running, the lexicon file should be successfully generated.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="err">!</span><span class="n">head</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>a _ ˈeɪ
+a's _ ˈeɪ z
+a.m. _ ˌeɪ ˈɛ m
+aaberg _ ˈɑː b ɜː ɡ
+aachen _ ˈɑː tʃ ə n
+aachener _ ˈɑː tʃ ə n ˌə
+aah _ ˈɑː
+aaker _ ˈɑː k ə
+aaliyah _ ə l ˈiː  ə
+aalseth _ ˈɑː l s ə θ
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="err">!</span><span class="n">tail</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>zynda _ z ˈɪ n d ə
+zysk _ z ˈɪ s k
+zyskowski _ z ɪ s k ˈaʊ s k ɪ
+zyuganov _ z j ˈuː ɡ ɐ n ˌɒ v
+zyuganov's _ z j ˈuː ɡ ɐ n ˌɒ v z
+zywicki _ z aɪ w ˈɪ k i
+éabha _ ɪ  ˈa b h ə
+órla _ ˈɔː l ə
+órlagh _ ˈɔː l ɑː ɡ
+šerbedžija _ ʃ ˈɜː b ɪ d ʒ ˌɪ dʒ ə
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="err">!</span><span class="n">wc</span> <span class="o">-</span><span class="n">l</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>125059 lexicon.txt
+</code></pre></div>
+<p>As expected, there are more entries in the lexicon than the original word list (125,059 from 124,392) due to homographs. A word could appear twice or more, if it's a homograph.</p>
+<h3 id="lexicon-database">Lexicon Database</h3>
+<p>We then convert the resultant lexicon text file to a SQLite database that gruut will read from later. Again, the script was conveniently provided by the authors of gruut. We simply have to run the Python utility script and pass the additional <code>--role</code> argument as we're also working with POS tags.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-13-1" id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="err">!</span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">gruut</span><span class="o">.</span><span class="n">lexicon2db</span> <span class="o">--</span><span class="n">role</span> <span class="o">--</span><span class="n">casing</span> <span class="n">lower</span> <span class="o">--</span><span class="n">lexicon</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">database</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">db</span>
+</code></pre></div>
+<h2 id="g2p-model">G2P Model</h2>
+<p>The last component that we have to train is a grapheme-to-phoneme (g2p) model. Here, we'll be using <a href="https://github.com/AdolfVonKleist/Phonetisaurus">Phonetisaurus</a> to generate a grapheme-phoneme alignment corpus.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-14-1" id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="err">!</span><span class="n">phonetisaurus</span> <span class="n">train</span> <span class="o">--</span><span class="n">corpus</span> <span class="n">g2p</span><span class="o">.</span><span class="n">corpus</span> <span class="o">--</span><span class="n">model</span> <span class="n">g2p</span><span class="o">.</span><span class="n">fst</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>INFO:phonetisaurus-train:2022-12-12 06:57:23:  Checking command configuration...
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  Directory does not exist.  Trying to create.
+INFO:phonetisaurus-train:2022-12-12 06:57:23:  Checking lexicon for reserved characters: '}', '|', '_'...
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  arpa_path:  train/model.o8.arpa
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  corpus_path:  train/model.corpus
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  dir_prefix:  train
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  grow:  False
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  lexicon_file:  /tmp/tmp9apulg06.txt
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  logger:  &lt;Logger phonetisaurus-train (DEBUG)&gt;
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  makeJointNgramCommand:  &lt;bound method G2PModelTrainer._mitlm of &lt;__main__.G2PModelTrainer object at 0x7ff2e63a4610&gt;&gt;
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  model_path:  train/model.fst
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  model_prefix:  model
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  ngram_order:  8
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  seq1_del:  False
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  seq1_max:  2
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  seq2_del:  True
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  seq2_max:  2
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  verbose:  True
+DEBUG:phonetisaurus-train:2022-12-12 06:57:23:  phonetisaurus-align --input=/tmp/tmp9apulg06.txt --ofile=train/model.corpus --seq1_del=false --seq2_del=true --seq1_max=2 --seq2_max=2 --grow=false
+INFO:phonetisaurus-train:2022-12-12 06:57:23:  Aligning lexicon...
+GitRevision: package
+Loading input file: /tmp/tmp9apulg06.txt
+Alignment failed: i t
+Alignment failed: m o h a m e d
+Alignment failed: o n e
+Alignment failed: s t
+Alignment failed: s t
+Alignment failed: t o
+Alignment failed: v i
+Alignment failed: v i
+Alignment failed: v i
+Alignment failed: w h e r e v e r
+Alignment failed: x i
+Alignment failed: x i
+Alignment failed: x i
+Starting EM...
+Finished first iter...
+Iteration: 1 Change: 2.5657
+Iteration: 2 Change: 0.00875473
+Iteration: 3 Change: 0.012403
+Iteration: 4 Change: 0.00788784
+Iteration: 5 Change: 0.00399113
+Iteration: 6 Change: 0.00240803
+Iteration: 7 Change: 0.00218391
+Iteration: 8 Change: 0.00197029
+Iteration: 9 Change: 0.00191975
+Iteration: 10 Change: 0.00169945
+Iteration: 11 Change: 0.00149059
+Last iteration: 
+DEBUG:phonetisaurus-train:2022-12-12 06:57:24:  estimate-ngram -o 8 -t train/model.corpus -wl train/model.o8.arpa
+INFO:phonetisaurus-train:2022-12-12 06:57:24:  Training joint ngram model...
+0.001   Loading corpus train/model.corpus...
+0.020   Smoothing[1] = ModKN
+0.020   Smoothing[2] = ModKN
+0.020   Smoothing[3] = ModKN
+0.020   Smoothing[4] = ModKN
+0.020   Smoothing[5] = ModKN
+0.020   Smoothing[6] = ModKN
+0.020   Smoothing[7] = ModKN
+0.020   Smoothing[8] = ModKN
+0.020   Set smoothing algorithms...
+0.020   Y 6.304348e-01
+0.020   Y 6.363636e-01
+0.020   Y 7.024504e-01
+0.020   Y 7.710983e-01
+0.020   Y 8.060942e-01
+0.020   Y 8.090737e-01
+0.020   Y 8.037634e-01
+0.021   Y 6.779026e-01
+0.021   Estimating full n-gram model...
+0.021   Saving LM to train/model.o8.arpa...
+DEBUG:phonetisaurus-train:2022-12-12 06:57:24:  phonetisaurus-arpa2wfst --lm=train/model.o8.arpa --ofile=train/model.fst
+INFO:phonetisaurus-train:2022-12-12 06:57:24:  Converting ARPA format joint n-gram model to WFST format...
+GitRevision: package
+Initializing...
+Converting...
+INFO:phonetisaurus-train:2022-12-12 06:57:24:  G2P training succeeded: train/model.fst
+</code></pre></div>
+<p>Using the alignment corpus, we can then train a g2p conditional random field (CRF) model using the script provided by gruut.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-15-1" id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="err">!</span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">gruut</span><span class="o">.</span><span class="n">g2p</span> <span class="n">train</span> <span class="o">--</span><span class="n">corpus</span> <span class="n">g2p</span><span class="o">.</span><span class="n">corpus</span> <span class="o">--</span><span class="n">output</span> <span class="n">g2p</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">crf</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>INFO:gruut.g2p:Training
+INFO:gruut.g2p:Training completed in 25.27762404100031 second(s)
+INFO:gruut.g2p:{'num': 49, 'scores': {}, 'loss': 5350.58727, 'feature_norm': 49.770636, 'error_norm': 0.506685, 'active_features': 46707, 'linesearch_trials': 1, 'linesearch_step': 1.0, 'time': 0.471}
+</code></pre></div>
+<p>Finally, we have to integrate the alignment corpus back into the lexicon database.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-16-1" id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="err">!</span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">gruut</span><span class="o">.</span><span class="n">corpus2db</span> <span class="o">--</span><span class="n">corpus</span> <span class="n">g2p</span><span class="o">.</span><span class="n">corpus</span> <span class="o">--</span><span class="n">database</span> <span class="n">lexicon</span><span class="o">.</span><span class="n">db</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Added 429 alignments to lexicon.db
+</code></pre></div>
+<p>And we're all set to integrate our new British English g2p model into gruut!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We did not go through the necessary steps to build a POS tagging model, simply because we can just use the existing American English POS tagging model.</p>
+</div>
+<h2 id="integrating-into-gruut">Integrating into gruut</h2>
+<p>The official guide is outdated on how we could add a new language into gruut. But after reading the source code, it seems that it's simply going to look up files in the <code>gruut/gruut-lang-{lang}</code> directory, where <code>{lang}</code> is the language that we want to support. Now, the issue is that there's already an English directory, which contains the necessary files for American English.</p>
+<p>What we decided to do is to replace the lexicon database and the g2p model inside <code>gruut/gruut-lang-en/gruut-lang-en/espeak</code> folder, which can later be accessed by flagging <code>espeak=True</code> in the Python front-end. This is a rather hacky solution since we're assuming that anytime the end user asks for the espeak English model, we're going to return them the British English model -- regardless if they ask for <code>en-us</code>. But nonetheless, I think this would still work anyway.</p>
+<p>A simple replacement of <code>gruut/gruut-lang-en/gruut_lang_en/espeak/lexicon.db</code> and <code>gruut/gruut-lang-en/gruut_lang_en/espeak/g2p/model.crf</code> with our newly generated files from above should do the job.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-17-1" id="__codelineno-17-1" name="__codelineno-17-1"></a>!cp g2p/model.crf gruut/gruut-lang-en/gruut_lang_en/espeak/g2p/
+<a href="#__codelineno-17-2" id="__codelineno-17-2" name="__codelineno-17-2"></a>!cp lexicon.db gruut/gruut-lang-en/gruut_lang_en/espeak/
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-18-1" id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="w"> </span> gruut<span class="w"></span>
+<a href="#__codelineno-18-2" id="__codelineno-18-2" name="__codelineno-18-2"></a><span class="w"> </span> ├── ...<span class="w"></span>
+<a href="#__codelineno-18-3" id="__codelineno-18-3" name="__codelineno-18-3"></a><span class="w"> </span> ...<span class="w"></span>
+<a href="#__codelineno-18-4" id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="w"> </span> ├── gruut-lang-en<span class="w"></span>
+<a href="#__codelineno-18-5" id="__codelineno-18-5" name="__codelineno-18-5"></a><span class="w"> </span> │   ├── LANGUAGE<span class="w"></span>
+<a href="#__codelineno-18-6" id="__codelineno-18-6" name="__codelineno-18-6"></a><span class="w"> </span> │   ├── README.md<span class="w"></span>
+<a href="#__codelineno-18-7" id="__codelineno-18-7" name="__codelineno-18-7"></a><span class="w"> </span> │   ├── gruut_lang_en<span class="w"></span>
+<a href="#__codelineno-18-8" id="__codelineno-18-8" name="__codelineno-18-8"></a><span class="w"> </span> │   │   ├── VERSION<span class="w"></span>
+<a href="#__codelineno-18-9" id="__codelineno-18-9" name="__codelineno-18-9"></a><span class="w"> </span> │   │   ├── __init__.py<span class="w"></span>
+<a href="#__codelineno-18-10" id="__codelineno-18-10" name="__codelineno-18-10"></a><span class="w"> </span> │   │   ├── espeak<span class="w"></span>
+<a href="#__codelineno-18-11" id="__codelineno-18-11" name="__codelineno-18-11"></a><span class="w"> </span> │   │   │   ├── g2p<span class="w"></span>
+<a href="#__codelineno-18-12" id="__codelineno-18-12" name="__codelineno-18-12"></a><span class="gi">+ │   │   │   │   └── model.crf</span><span class="w"></span>
+<a href="#__codelineno-18-13" id="__codelineno-18-13" name="__codelineno-18-13"></a><span class="gi">+ │   │   │   └── lexicon.db</span><span class="w"></span>
+<a href="#__codelineno-18-14" id="__codelineno-18-14" name="__codelineno-18-14"></a><span class="w"> </span> │   │   ├── g2p<span class="w"></span>
+<a href="#__codelineno-18-15" id="__codelineno-18-15" name="__codelineno-18-15"></a><span class="w"> </span> │   │   │   └── model.crf<span class="w"></span>
+<a href="#__codelineno-18-16" id="__codelineno-18-16" name="__codelineno-18-16"></a><span class="w"> </span> │   │   ├── lexicon.db<span class="w"></span>
+<a href="#__codelineno-18-17" id="__codelineno-18-17" name="__codelineno-18-17"></a><span class="w"> </span> │   │   └── pos<span class="w"></span>
+<a href="#__codelineno-18-18" id="__codelineno-18-18" name="__codelineno-18-18"></a><span class="w"> </span> │   │       └── model.crf<span class="w"></span>
+<a href="#__codelineno-18-19" id="__codelineno-18-19" name="__codelineno-18-19"></a><span class="w"> </span> │   └── setup.py<span class="w"></span>
+<a href="#__codelineno-18-20" id="__codelineno-18-20" name="__codelineno-18-20"></a><span class="w"> </span> ...<span class="w"></span>
+<a href="#__codelineno-18-21" id="__codelineno-18-21" name="__codelineno-18-21"></a><span class="w"> </span> └── ...<span class="w"></span>
+</code></pre></div>
+<p>An example demonstrating this can be found in this <a href="https://github.com/w11wo/gruut/commit/a1201f3f0a73999f739c99c9f1f9735558eb684d">commit</a>.</p>
+<h2 id="test">Test</h2>
+<p>To test, we need to re-install our local copy of gruut.</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-19-1" id="__codelineno-19-1" name="__codelineno-19-1"></a><span class="err">!</span><span class="n">cd</span> <span class="n">gruut</span> <span class="o">&amp;&amp;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">.</span> <span class="o">&amp;&amp;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">./</span><span class="n">gruut</span><span class="o">-</span><span class="n">lang</span><span class="o">-</span><span class="n">en</span>
+</code></pre></div>
+<p>At this point you might need to restart your Google Colab runtime to re-import the new gruut.</p>
+<p>And finally, we can perform a conversion through the Python frontend like so:</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-20-1" id="__codelineno-20-1" name="__codelineno-20-1"></a><span class="kn">import</span> <span class="nn">gruut</span>
+<a href="#__codelineno-20-2" id="__codelineno-20-2" name="__codelineno-20-2"></a>
+<a href="#__codelineno-20-3" id="__codelineno-20-3" name="__codelineno-20-3"></a><span class="n">text</span> <span class="o">=</span> <span class="s2">"an accelerating runner"</span>
+<a href="#__codelineno-20-4" id="__codelineno-20-4" name="__codelineno-20-4"></a>
+<a href="#__codelineno-20-5" id="__codelineno-20-5" name="__codelineno-20-5"></a><span class="k">for</span> <span class="n">words</span> <span class="ow">in</span> <span class="n">gruut</span><span class="o">.</span><span class="n">sentences</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">"en-gb"</span><span class="p">,</span> <span class="n">espeak</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<a href="#__codelineno-20-6" id="__codelineno-20-6" name="__codelineno-20-6"></a>    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+<a href="#__codelineno-20-7" id="__codelineno-20-7" name="__codelineno-20-7"></a>        <span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">phonemes</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>['ˈa', 'n']
+['ɐ', 'k', 's', 'ˈɛ', 'l', 'ə', 'ɹ', 'ˌeɪ', 't', 'ɪ', 'ŋ']
+['ɹ', 'ˈʌ', 'n', 'ə']
+</code></pre></div>
+<p>Comparing that to American English</p>
+<div class="highlight"><pre><span></span><code><a href="#__codelineno-21-1" id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="k">for</span> <span class="n">words</span> <span class="ow">in</span> <span class="n">gruut</span><span class="o">.</span><span class="n">sentences</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">"en-us"</span><span class="p">):</span> <span class="c1"># don't set espeak=True!</span>
+<a href="#__codelineno-21-2" id="__codelineno-21-2" name="__codelineno-21-2"></a>    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+<a href="#__codelineno-21-3" id="__codelineno-21-3" name="__codelineno-21-3"></a>        <span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">phonemes</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>['ə', 'n']
+['æ', 'k', 's', 'ˈɛ', 'l', 'ɚ', 'ˌeɪ', 't', 'ɪ', 'ŋ']
+['ɹ', 'ˈʌ', 'n', 'ɚ']
+</code></pre></div>
+<p>All done!</p>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Implementing Custom Processor" class="md-footer__link md-footer__link--prev" href="../custom_processor/" rel="prev">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
+</div>
+<div class="md-footer__title">
+<div class="md-ellipsis">
+<span class="md-footer__direction">
+                Previous
+              </span>
+              Implementing Custom Processor
+            </div>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+<script src="../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
+<script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+<script src="../../javascripts/tablesort.js"></script>
+<script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>
