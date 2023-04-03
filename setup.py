@@ -46,7 +46,7 @@ requirements = {
         "dataclasses",
         "pyopenjtalk==0.1.3",
         "gruut",
-        "g2p_id_py==0.3.1",
+        "g2p_id_py==0.3.2",
     ],
     "setup": [
         "numpy",
