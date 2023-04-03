@@ -45,7 +45,7 @@ requirements = {
         "g2p_en",
         "dataclasses",
         "pyopenjtalk==0.1.3",
-        "gruut",
+        "babygruut",
         "g2p_id_py==0.3.2",
     ],
     "setup": [
