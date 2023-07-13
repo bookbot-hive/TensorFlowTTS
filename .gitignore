@@ -1,4 +1,6 @@
- 
+*.tflite
+notebooks/fastspeech2/
+notebooks/mbmelgan/
 # general
 *~
 *.pyc
