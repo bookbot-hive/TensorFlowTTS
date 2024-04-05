@@ -44,7 +44,7 @@ requirements = {
         "click",
         "g2p_en",
         "dataclasses",
-        "pyopenjtalk==0.1.3",
+        "pyopenjtalk>=0.1.3",
         "babygruut",
         "g2p_id_py==0.3.2",
     ],
