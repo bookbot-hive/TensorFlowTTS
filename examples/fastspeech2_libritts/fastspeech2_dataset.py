@@ -59,7 +59,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         f0_load_fn=np.load,
         energy_load_fn=np.load,
         mel_length_threshold=0,
-        speakers_map=None
+        speakers_map=None,
     ):
         """Initialize dataset.
 
@@ -91,11 +91,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         # assert the number of files
         assert len(mel_files) != 0, f"Not found any mels files in ${root_dir}."
         assert (
-            len(mel_files)
-            == len(charactor_files)
-            == len(duration_files)
-            == len(f0_files)
-            == len(energy_files)
+            len(mel_files) == len(charactor_files) == len(duration_files) == len(f0_files) == len(energy_files)
         ), f"Number of charactor, mel, duration, f0 and energy files are different"
 
         assert speakers_map != None, f"No speakers map found. Did you set --dataset_mapping?"
@@ -118,7 +114,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         self.energy_load_fn = energy_load_fn
         self.mel_length_threshold = mel_length_threshold
         self.speakers_map = speakers_map
-        self.speakers = [self.speakers_map[i.split("_")[0]] for i in self.utt_ids]
+        self.speakers = [self.speakers_map[i.split("_")[0]] for i in self.utt_ids] if len(self.speakers_map) > 1 else [0] * len(self.utt_ids)
         print("Speaker: utt_id", list(zip(self.speakers, self.utt_ids)))
         self.f0_stat = np.load(f0_stat)
         self.energy_stat = np.load(energy_stat)
@@ -166,9 +162,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
         energy = tf.numpy_function(np.load, [items["energy_files"]], tf.float32)
 
         f0 = self._norm_mean_std_tf(f0, self.f0_stat[0], self.f0_stat[1])
-        energy = self._norm_mean_std_tf(
-            energy, self.energy_stat[0], self.energy_stat[1]
-        )
+        energy = self._norm_mean_std_tf(energy, self.energy_stat[0], self.energy_stat[1])
 
         # calculate charactor f0/energy
         f0 = tf_average_by_duration(f0, duration)
@@ -197,18 +191,12 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
     ):
         """Create tf.dataset function."""
         output_types = self.get_output_dtypes()
-        datasets = tf.data.Dataset.from_generator(
-            self.generator, output_types=output_types, args=(self.get_args())
-        )
+        datasets = tf.data.Dataset.from_generator(self.generator, output_types=output_types, args=(self.get_args()))
 
         # load data
-        datasets = datasets.map(
-            lambda items: self._load_data(items), tf.data.experimental.AUTOTUNE
-        )
+        datasets = datasets.map(lambda items: self._load_data(items), tf.data.experimental.AUTOTUNE)
 
-        datasets = datasets.filter(
-            lambda x: x["mel_lengths"] > self.mel_length_threshold
-        )
+        datasets = datasets.filter(lambda x: x["mel_lengths"] > self.mel_length_threshold)
 
         if allow_cache:
             datasets = datasets.cache()
@@ -231,9 +219,7 @@ class CharactorDurationF0EnergyMelDataset(AbstractDataset):
             "mel_lengths": [],
         }
 
-        datasets = datasets.padded_batch(
-            batch_size, padded_shapes=padded_shapes, drop_remainder=True
-        )
+        datasets = datasets.padded_batch(batch_size, padded_shapes=padded_shapes, drop_remainder=True)
         datasets = datasets.prefetch(tf.data.experimental.AUTOTUNE)
         return datasets
 

@@ -31,6 +31,7 @@ from tensorflow_tts.processor import (
     LJSpeechMultiProcessor,
     IndonesianIPAProcessor,
     EnglishIPAProcessor,
+    SwahiliIPAProcessor,
     JavaneseCharacterProcessor,
 )
 
@@ -51,6 +52,7 @@ CONFIG_MAPPING = OrderedDict(
         ("JSUTProcessor", JSUTProcessor),
         ("IndonesianIPAProcessor", IndonesianIPAProcessor),
         ("EnglishIPAProcessor", EnglishIPAProcessor),
+        ("SwahiliIPAProcessor", SwahiliIPAProcessor),
         ("JavaneseCharacterProcessor", JavaneseCharacterProcessor),
     ]
 )

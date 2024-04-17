@@ -11,4 +11,5 @@ from tensorflow_tts.processor.jsut import JSUTProcessor
 from tensorflow_tts.processor.ljspeech_multi import LJSpeechMultiProcessor
 from tensorflow_tts.processor.indonesian_ipa import IndonesianIPAProcessor
 from tensorflow_tts.processor.english_ipa import EnglishIPAProcessor
+from tensorflow_tts.processor.swahili_ipa import SwahiliIPAProcessor
 from tensorflow_tts.processor.javanese_char import JavaneseCharacterProcessor

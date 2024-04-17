@@ -42,6 +42,7 @@ from tensorflow_tts.processor import SynpaflexProcessor
 from tensorflow_tts.processor import JSUTProcessor
 from tensorflow_tts.processor import IndonesianIPAProcessor
 from tensorflow_tts.processor import EnglishIPAProcessor
+from tensorflow_tts.processor import SwahiliIPAProcessor
 from tensorflow_tts.processor import JavaneseCharacterProcessor
 from tensorflow_tts.processor.ljspeech import LJSPEECH_SYMBOLS
 from tensorflow_tts.processor.baker import BAKER_SYMBOLS
@@ -53,6 +54,7 @@ from tensorflow_tts.processor.synpaflex import SYNPAFLEX_SYMBOLS
 from tensorflow_tts.processor.jsut import JSUT_SYMBOLS
 from tensorflow_tts.processor.indonesian_ipa import INDONESIAN_IPA_SYMBOLS
 from tensorflow_tts.processor.english_ipa import ENGLISH_IPA_SYMBOLS
+from tensorflow_tts.processor.swahili_ipa import SWAHILI_IPA_SYMBOLS
 from tensorflow_tts.processor.javanese_char import JAVANESE_CHARACTER_SYMBOLS
 
 from tensorflow_tts.utils import remove_outlier
@@ -63,8 +65,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 def parse_and_config():
     """Parse arguments and set configuration parameters."""
     parser = argparse.ArgumentParser(
-        description="Preprocess audio and text features "
-        "(See detail in tensorflow_tts/bin/preprocess_dataset.py)."
+        description="Preprocess audio and text features " "(See detail in tensorflow_tts/bin/preprocess_dataset.py)."
     )
     parser.add_argument(
         "--rootdir",
@@ -96,13 +97,12 @@ def parse_and_config():
             "jsut",
             "indonesianipa",
             "englishipa",
+            "swahiliipa",
             "javanesechar",
         ],
         help="Dataset to preprocess.",
     )
-    parser.add_argument(
-        "--config", type=str, required=True, help="YAML format configuration file."
-    )
+    parser.add_argument("--config", type=str, required=True, help="YAML format configuration file.")
     parser.add_argument(
         "--n_cpus",
         type=int,
@@ -159,12 +159,8 @@ def ph_based_trim(
     """
 
     os.makedirs(os.path.join(config["rootdir"], "trimmed-durations"), exist_ok=True)
-    duration_path = config.get(
-        "duration_path", os.path.join(config["rootdir"], "durations")
-    )
-    duration_fixed_path = config.get(
-        "duration_fixed_path", os.path.join(config["rootdir"], "trimmed-durations")
-    )
+    duration_path = config.get("duration_path", os.path.join(config["rootdir"], "durations"))
+    duration_fixed_path = config.get("duration_fixed_path", os.path.join(config["rootdir"], "trimmed-durations"))
     sil_ph = ["SIL", "END"]  # TODO FIX hardcoded values
     text = raw_text.split(" ")
 
@@ -224,9 +220,7 @@ def gen_audio_features(item, config):
     # check sample rate
     if rate != config["sampling_rate"]:
         audio = librosa.resample(audio, orig_sr=rate, target_sr=config["sampling_rate"])
-        logging.info(
-            f"{utt_id} sampling rate is {rate}, not {config['sampling_rate']}, we resample it."
-        )
+        logging.info(f"{utt_id} sampling rate is {rate}, not {config['sampling_rate']}, we resample it.")
 
     # trim silence
     if config["trim_silence"]:
@@ -242,9 +236,7 @@ def gen_audio_features(item, config):
             if (
                 audio.__len__() < 1
             ):  # very short files can get trimmed fully if mfa didnt extract any tokens LibriTTS maybe take only longer files?
-                logging.warning(
-                    f"File have only silence or MFA didnt extract any token {utt_id}"
-                )
+                logging.warning(f"File have only silence or MFA didnt extract any token {utt_id}")
                 return False, None, None, None, item
         else:
             audio, _ = librosa.effects.trim(
@@ -256,9 +248,7 @@ def gen_audio_features(item, config):
 
     # resample audio if necessary
     if "sampling_rate_for_feats" in config:
-        audio = librosa.resample(
-            audio, orig_sr=rate, target_sr=config["sampling_rate_for_feats"]
-        )
+        audio = librosa.resample(audio, orig_sr=rate, target_sr=config["sampling_rate_for_feats"])
         sampling_rate = config["sampling_rate_for_feats"]
         assert (
             config["hop_size"] * config["sampling_rate_for_feats"] % rate == 0
@@ -321,9 +311,7 @@ def gen_audio_features(item, config):
     if config["global_gain_scale"] > 0.0:
         audio *= config["global_gain_scale"]
     if np.abs(audio).max() >= 1.0:
-        logging.warn(
-            f"{utt_id} causes clipping. It is better to reconsider global gain scale value."
-        )
+        logging.warn(f"{utt_id} causes clipping. It is better to reconsider global gain scale value.")
     item["audio"] = audio
     item["mel"] = mel
     item["f0"] = f0
@@ -365,9 +353,7 @@ def save_features_to_file(features, subdir, config):
         ]
         for item, name_dir, name_file, fmt in save_list:
             np.save(
-                os.path.join(
-                    config["outdir"], subdir, name_dir, f"{utt_id}-{name_file}.npy"
-                ),
+                os.path.join(config["outdir"], subdir, name_dir, f"{utt_id}-{name_file}.npy"),
                 item.astype(fmt),
                 allow_pickle=False,
             )
@@ -391,6 +377,7 @@ def preprocess():
         "jsut": JSUTProcessor,
         "indonesianipa": IndonesianIPAProcessor,
         "englishipa": EnglishIPAProcessor,
+        "swahiliipa": SwahiliIPAProcessor,
         "javanesechar": JavaneseCharacterProcessor,
     }
 
@@ -406,6 +393,7 @@ def preprocess():
         "jsut": JSUT_SYMBOLS,
         "indonesianipa": INDONESIAN_IPA_SYMBOLS,
         "englishipa": ENGLISH_IPA_SYMBOLS,
+        "swahiliipa": SWAHILI_IPA_SYMBOLS,
         "javanesechar": JAVANESE_CHARACTER_SYMBOLS,
     }
 
@@ -421,6 +409,7 @@ def preprocess():
         "jsut": None,
         "indonesianipa": None,
         "englishipa": None,
+        "swahiliipa": None,
         "javanesechar": None,
     }
 
@@ -442,9 +431,7 @@ def preprocess():
     # save pretrained-processor to feature dir
     processor._save_mapper(
         os.path.join(config["outdir"], f"{config['dataset']}_mapper.json"),
-        extra_attrs_to_save={"pinyin_dict": processor.pinyin_dict}
-        if config["dataset"] == "baker"
-        else {},
+        extra_attrs_to_save={"pinyin_dict": processor.pinyin_dict} if config["dataset"] == "baker" else {},
     )
 
     # build train test split
@@ -519,9 +506,7 @@ def preprocess():
             os.path.join(config["outdir"], "train_utt_ids.npy"),
             [i for i in train_utt_ids if i not in id_to_remove],
         )
-        logging.info(
-            f"removed {len(id_to_remove)} cause of too many outliers or bad mfa extraction"
-        )
+        logging.info(f"removed {len(id_to_remove)} cause of too many outliers or bad mfa extraction")
 
     # save statistics to file
     logging.info("Saving computed statistics.")
@@ -553,9 +538,7 @@ def gen_normal_mel(mel_path, scaler, config):
 
     utt_id = file_name.split(f"-{suffix}.npy")[0]
     np.save(
-        os.path.join(
-            config["outdir"], subdir, "norm-feats", f"{utt_id}-norm-feats.npy"
-        ),
+        os.path.join(config["outdir"], subdir, "norm-feats", f"{utt_id}-norm-feats.npy"),
         mel_norm.astype(np.float32),
         allow_pickle=False,
     )
@@ -567,9 +550,7 @@ def normalize():
     if config["format"] == "npy":
         # init scaler with saved values
         scaler = StandardScaler()
-        scaler.mean_, scaler.scale_ = np.load(
-            os.path.join(config["outdir"], "stats.npy")
-        )
+        scaler.mean_, scaler.scale_ = np.load(os.path.join(config["outdir"], "stats.npy"))
         scaler.n_features_in_ = config["num_mels"]
     else:
         raise ValueError("'npy' is the only supported format.")
@@ -607,9 +588,7 @@ def compute_statistics():
     scaler_energy = StandardScaler(copy=False)
     scaler_f0 = StandardScaler(copy=False)
 
-    for mel, f0, energy in tqdm(
-        zip(glob_mel, glob_f0, glob_energy), total=len(glob_mel)
-    ):
+    for mel, f0, energy in tqdm(zip(glob_mel, glob_f0, glob_energy), total=len(glob_mel)):
         # remove outliers
         energy = np.load(energy)
         f0 = np.load(f0)
