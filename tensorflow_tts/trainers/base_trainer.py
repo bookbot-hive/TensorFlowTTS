@@ -24,6 +24,8 @@ from tqdm import tqdm
 from tensorflow_tts.optimizers import GradientAccumulator
 from tensorflow_tts.utils import utils
 
+# tf.keras.mixed_precision.set_global_policy("mixed_bfloat16")
+
 
 class BasedTrainer(metaclass=abc.ABCMeta):
     """Customized trainer module for all models."""
@@ -45,12 +47,8 @@ class BasedTrainer(metaclass=abc.ABCMeta):
         self.train_metrics = {}
         self.eval_metrics = {}
         for name in list_metrics_name:
-            self.train_metrics.update(
-                {name: tf.keras.metrics.Mean(name="train_" + name, dtype=tf.float32)}
-            )
-            self.eval_metrics.update(
-                {name: tf.keras.metrics.Mean(name="eval_" + name, dtype=tf.float32)}
-            )
+            self.train_metrics.update({name: tf.keras.metrics.Mean(name="train_" + name, dtype=tf.float32)})
+            self.eval_metrics.update({name: tf.keras.metrics.Mean(name="eval_" + name, dtype=tf.float32)})
 
     def reset_states_train(self):
         """Reset train metrics after save it to tensorboard."""
@@ -97,9 +95,7 @@ class BasedTrainer(metaclass=abc.ABCMeta):
 
     def run(self):
         """Run training."""
-        self.tqdm = tqdm(
-            initial=self.steps, total=self.config["train_max_steps"], desc="[train]"
-        )
+        self.tqdm = tqdm(initial=self.steps, total=self.config["train_max_steps"], desc="[train]")
         while True:
             self._train_epoch()
 
@@ -247,9 +243,7 @@ class GanBasedTrainer(BasedTrainer):
         """Set generator optimizer (MUST)."""
         self._gen_optimizer = generator_optimizer
         if self._is_generator_mixed_precision:
-            self._gen_optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                self._gen_optimizer, "dynamic"
-            )
+            self._gen_optimizer = tf.keras.mixed_precision.LossScaleOptimizer(self._gen_optimizer)
 
     def get_gen_optimizer(self):
         """Get generator optimizer."""
@@ -259,9 +253,7 @@ class GanBasedTrainer(BasedTrainer):
         """Set discriminator optimizer (MUST)."""
         self._dis_optimizer = discriminator_optimizer
         if self._is_discriminator_mixed_precision:
-            self._dis_optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                self._dis_optimizer, "dynamic"
-            )
+            self._dis_optimizer = tf.keras.mixed_precision.LossScaleOptimizer(self._dis_optimizer)
 
     def get_dis_optimizer(self):
         """Get discriminator optimizer."""
@@ -277,15 +269,9 @@ class GanBasedTrainer(BasedTrainer):
         if self._already_apply_input_signature is False:
             train_element_signature = self._get_train_element_signature()
             eval_element_signature = self._get_eval_element_signature()
-            self.one_step_forward = tf.function(
-                self._one_step_forward, input_signature=[train_element_signature]
-            )
-            self.one_step_evaluate = tf.function(
-                self._one_step_evaluate, input_signature=[eval_element_signature]
-            )
-            self.one_step_predict = tf.function(
-                self._one_step_predict, input_signature=[eval_element_signature]
-            )
+            self.one_step_forward = tf.function(self._one_step_forward, input_signature=[train_element_signature])
+            self.one_step_evaluate = tf.function(self._one_step_evaluate, input_signature=[eval_element_signature])
+            self.one_step_predict = tf.function(self._one_step_predict, input_signature=[eval_element_signature])
             self._already_apply_input_signature = True
 
         # run one_step_forward
@@ -297,23 +283,19 @@ class GanBasedTrainer(BasedTrainer):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
-        per_replica_losses = self._strategy.run(
-            self._one_step_forward_per_replica, args=(batch,)
-        )
-        return self._strategy.reduce(
-            tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
-        )
+        per_replica_losses = self._strategy.run(self._one_step_forward_per_replica, args=(batch,))
+        return self._strategy.reduce(tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None)
 
     @abc.abstractmethod
     def compute_per_example_generator_losses(self, batch, outputs):
         """Compute per example generator losses and return dict_metrics_losses
-        Note that all element of the loss MUST has a shape [batch_size] and 
+        Note that all element of the loss MUST has a shape [batch_size] and
         the keys of dict_metrics_losses MUST be in self.list_metrics_name.
 
         Args:
             batch: dictionary batch input return from dataloader
             outputs: outputs of the model
-        
+
         Returns:
             per_example_losses: per example losses for each GPU, shape [B]
             dict_metrics_losses: dictionary loss.
@@ -325,13 +307,13 @@ class GanBasedTrainer(BasedTrainer):
     @abc.abstractmethod
     def compute_per_example_discriminator_losses(self, batch, gen_outputs):
         """Compute per example discriminator losses and return dict_metrics_losses
-        Note that all element of the loss MUST has a shape [batch_size] and 
+        Note that all element of the loss MUST has a shape [batch_size] and
         the keys of dict_metrics_losses MUST be in self.list_metrics_name.
 
         Args:
             batch: dictionary batch input return from dataloader
             outputs: outputs of the model
-        
+
         Returns:
             per_example_losses: per example losses for each GPU, shape [B]
             dict_metrics_losses: dictionary loss.
@@ -354,19 +336,13 @@ class GanBasedTrainer(BasedTrainer):
         )
 
         if self._is_generator_mixed_precision:
-            scaled_per_replica_gen_losses = self._gen_optimizer.get_scaled_loss(
-                per_replica_gen_losses
-            )
+            scaled_per_replica_gen_losses = self._gen_optimizer.get_scaled_loss(per_replica_gen_losses)
 
         if self._is_generator_mixed_precision:
-            scaled_gradients = tf.gradients(
-                scaled_per_replica_gen_losses, self._generator.trainable_variables
-            )
+            scaled_gradients = tf.gradients(scaled_per_replica_gen_losses, self._generator.trainable_variables)
             gradients = self._gen_optimizer.get_unscaled_gradients(scaled_gradients)
         else:
-            gradients = tf.gradients(
-                per_replica_gen_losses, self._generator.trainable_variables
-            )
+            gradients = tf.gradients(per_replica_gen_losses, self._generator.trainable_variables)
 
         # gradient accumulate for generator here
         if self.config["gradient_accumulation_steps"] > 1:
@@ -384,9 +360,7 @@ class GanBasedTrainer(BasedTrainer):
         (
             per_example_losses,
             dict_metrics_losses,
-        ) = self.compute_per_example_discriminator_losses(
-            batch, self._generator(**batch, training=True)
-        )
+        ) = self.compute_per_example_discriminator_losses(batch, self._generator(**batch, training=True))
 
         per_replica_dis_losses = tf.nn.compute_average_loss(
             per_example_losses,
@@ -396,9 +370,7 @@ class GanBasedTrainer(BasedTrainer):
         )
 
         if self._is_discriminator_mixed_precision:
-            scaled_per_replica_dis_losses = self._dis_optimizer.get_scaled_loss(
-                per_replica_dis_losses
-            )
+            scaled_per_replica_dis_losses = self._dis_optimizer.get_scaled_loss(per_replica_dis_losses)
 
         if self._is_discriminator_mixed_precision:
             scaled_gradients = tf.gradients(
@@ -407,9 +379,7 @@ class GanBasedTrainer(BasedTrainer):
             )
             gradients = self._dis_optimizer.get_unscaled_gradients(scaled_gradients)
         else:
-            gradients = tf.gradients(
-                per_replica_dis_losses, self._discriminator.trainable_variables
-            )
+            gradients = tf.gradients(per_replica_dis_losses, self._discriminator.trainable_variables)
 
         # accumulate loss into metrics
         self.update_train_metrics(dict_metrics_losses)
@@ -423,7 +393,6 @@ class GanBasedTrainer(BasedTrainer):
         else:
             return per_replica_dis_losses
 
-
     def _one_step_forward_per_replica(self, batch):
         per_replica_gen_losses = 0.0
         per_replica_dis_losses = 0.0
@@ -433,33 +402,22 @@ class GanBasedTrainer(BasedTrainer):
                 gradients,
                 per_replica_gen_losses,
             ) = self._calculate_generator_gradient_per_batch(batch)
-            self._gen_optimizer.apply_gradients(
-                zip(gradients, self._generator.trainable_variables)
-            )
+            self._gen_optimizer.apply_gradients(zip(gradients, self._generator.trainable_variables))
         else:
             # gradient acummulation here.
             for i in tf.range(self.config["gradient_accumulation_steps"]):
                 reduced_batch = {
-                    k: v[
-                        i
-                        * self.config["batch_size"] : (i + 1)
-                        * self.config["batch_size"]
-                    ]
-                    for k, v in batch.items()
+                    k: v[i * self.config["batch_size"] : (i + 1) * self.config["batch_size"]] for k, v in batch.items()
                 }
 
                 # run 1 step accumulate
-                reduced_batch_losses = self._calculate_generator_gradient_per_batch(
-                    reduced_batch
-                )
+                reduced_batch_losses = self._calculate_generator_gradient_per_batch(reduced_batch)
 
                 # sum per_replica_losses
                 per_replica_gen_losses += reduced_batch_losses
 
             gradients = self._generator_gradient_accumulator.gradients
-            self._gen_optimizer.apply_gradients(
-                zip(gradients, self._generator.trainable_variables)
-            )
+            self._gen_optimizer.apply_gradients(zip(gradients, self._generator.trainable_variables))
             self._generator_gradient_accumulator.reset()
 
         # one step discriminator
@@ -470,33 +428,23 @@ class GanBasedTrainer(BasedTrainer):
                     gradients,
                     per_replica_dis_losses,
                 ) = self._calculate_discriminator_gradient_per_batch(batch)
-                self._dis_optimizer.apply_gradients(
-                    zip(gradients, self._discriminator.trainable_variables)
-                )
+                self._dis_optimizer.apply_gradients(zip(gradients, self._discriminator.trainable_variables))
             else:
                 # gradient acummulation here.
                 for i in tf.range(self.config["gradient_accumulation_steps"]):
                     reduced_batch = {
-                        k: v[
-                            i
-                            * self.config["batch_size"] : (i + 1)
-                            * self.config["batch_size"]
-                        ]
+                        k: v[i * self.config["batch_size"] : (i + 1) * self.config["batch_size"]]
                         for k, v in batch.items()
                     }
 
                     # run 1 step accumulate
-                    reduced_batch_losses = (
-                        self._calculate_discriminator_gradient_per_batch(reduced_batch)
-                    )
+                    reduced_batch_losses = self._calculate_discriminator_gradient_per_batch(reduced_batch)
 
                     # sum per_replica_losses
                     per_replica_dis_losses += reduced_batch_losses
 
                 gradients = self._discriminator_gradient_accumulator.gradients
-                self._dis_optimizer.apply_gradients(
-                    zip(gradients, self._discriminator.trainable_variables)
-                )
+                self._dis_optimizer.apply_gradients(zip(gradients, self._discriminator.trainable_variables))
                 self._discriminator_gradient_accumulator.reset()
 
         return per_replica_gen_losses + per_replica_dis_losses
@@ -506,9 +454,7 @@ class GanBasedTrainer(BasedTrainer):
         logging.info(f"(Steps: {self.steps}) Start evaluation.")
 
         # calculate loss for each batch
-        for eval_steps_per_epoch, batch in enumerate(
-            tqdm(self.eval_data_loader, desc="[eval]"), 1
-        ):
+        for eval_steps_per_epoch, batch in enumerate(tqdm(self.eval_data_loader, desc="[eval]"), 1):
             # eval one step
             self.one_step_evaluate(batch)
 
@@ -516,16 +462,11 @@ class GanBasedTrainer(BasedTrainer):
                 # save intermedia
                 self.generate_and_save_intermediate_result(batch)
 
-        logging.info(
-            f"(Steps: {self.steps}) Finished evaluation "
-            f"({eval_steps_per_epoch} steps per epoch)."
-        )
+        logging.info(f"(Steps: {self.steps}) Finished evaluation " f"({eval_steps_per_epoch} steps per epoch).")
 
         # average loss
         for key in self.eval_metrics.keys():
-            logging.info(
-                f"(Steps: {self.steps}) eval_{key} = {self.eval_metrics[key].result():.4f}."
-            )
+            logging.info(f"(Steps: {self.steps}) eval_{key} = {self.eval_metrics[key].result():.4f}.")
 
         # record
         self._write_to_tensorboard(self.eval_metrics, stage="eval")
@@ -537,9 +478,7 @@ class GanBasedTrainer(BasedTrainer):
         ################################################
         # one step generator.
         outputs = self._generator(**batch, training=False)
-        _, dict_metrics_losses = self.compute_per_example_generator_losses(
-            batch, outputs
-        )
+        _, dict_metrics_losses = self.compute_per_example_generator_losses(batch, outputs)
 
         # accumulate loss into metrics
         self.update_eval_metrics(dict_metrics_losses)
@@ -547,9 +486,7 @@ class GanBasedTrainer(BasedTrainer):
         ################################################
         # one step discriminator
         if self.steps >= self.config["discriminator_train_start_steps"]:
-            _, dict_metrics_losses = self.compute_per_example_discriminator_losses(
-                batch, outputs
-            )
+            _, dict_metrics_losses = self.compute_per_example_discriminator_losses(batch, outputs)
 
             # accumulate loss into metrics
             self.update_eval_metrics(dict_metrics_losses)
@@ -585,22 +522,17 @@ class GanBasedTrainer(BasedTrainer):
             gen_optimizer=self.get_gen_optimizer(),
             dis_optimizer=self.get_dis_optimizer(),
         )
-        self.ckp_manager = tf.train.CheckpointManager(
-            self.ckpt, saved_path, max_to_keep=max_to_keep
-        )
+        self.ckp_manager = tf.train.CheckpointManager(self.ckpt, saved_path, max_to_keep=max_to_keep)
 
     def save_checkpoint(self):
         """Save checkpoint."""
         self.ckpt.steps.assign(self.steps)
         self.ckpt.epochs.assign(self.epochs)
         self.ckp_manager.save(checkpoint_number=self.steps)
-        utils.save_weights(
-            self._generator,
-            self.saved_path + "generator-{}.h5".format(self.steps)
-        )
+        utils.save_weights(self._generator, self.saved_path + "generator-{}.h5".format(self.steps))
         utils.save_weights(
             self._discriminator,
-            self.saved_path + "discriminator-{}.h5".format(self.steps)
+            self.saved_path + "discriminator-{}.h5".format(self.steps),
         )
 
     def load_checkpoint(self, pretrained_path):
@@ -613,27 +545,18 @@ class GanBasedTrainer(BasedTrainer):
         self._gen_optimizer.iterations.assign(tf.cast(self.steps, tf.int64))
         # re-assign iterations (global steps) for dis_optimizer.
         try:
-            discriminator_train_start_steps = self.config[
-                "discriminator_train_start_steps"
-            ]
-            discriminator_train_start_steps = tf.math.maximum(
-                0, self.steps - discriminator_train_start_steps 
-            )
+            discriminator_train_start_steps = self.config["discriminator_train_start_steps"]
+            discriminator_train_start_steps = tf.math.maximum(0, self.steps - discriminator_train_start_steps)
         except Exception:
             discriminator_train_start_steps = self.steps
         self._dis_optimizer = self.ckpt.dis_optimizer
-        self._dis_optimizer.iterations.assign(
-            tf.cast(discriminator_train_start_steps, tf.int64)
-        )
+        self._dis_optimizer.iterations.assign(tf.cast(discriminator_train_start_steps, tf.int64))
 
         # load weights.
-        utils.load_weights(
-            self._generator,
-            self.saved_path + "generator-{}.h5".format(self.steps)
-        )
+        utils.load_weights(self._generator, self.saved_path + "generator-{}.h5".format(self.steps))
         utils.load_weights(
             self._discriminator,
-            self.saved_path + "discriminator-{}.h5".format(self.steps)
+            self.saved_path + "discriminator-{}.h5".format(self.steps),
         )
 
     def _check_train_finish(self):
@@ -641,14 +564,9 @@ class GanBasedTrainer(BasedTrainer):
         if self.steps >= self.config["train_max_steps"]:
             self.finish_train = True
 
-        if (
-            self.steps != 0
-            and self.steps == self.config["discriminator_train_start_steps"]
-        ):
+        if self.steps != 0 and self.steps == self.config["discriminator_train_start_steps"]:
             self.finish_train = True
-            logging.info(
-                f"Finished training only generator at {self.steps}steps, pls resume and continue training."
-            )
+            logging.info(f"Finished training only generator at {self.steps}steps, pls resume and continue training.")
 
     def _check_log_interval(self):
         """Log to tensorboard."""
@@ -665,12 +583,8 @@ class GanBasedTrainer(BasedTrainer):
     def fit(self, train_data_loader, valid_data_loader, saved_path, resume=None):
         self.set_train_data_loader(train_data_loader)
         self.set_eval_data_loader(valid_data_loader)
-        self.train_data_loader = self._strategy.experimental_distribute_dataset(
-            self.train_data_loader
-        )
-        self.eval_data_loader = self._strategy.experimental_distribute_dataset(
-            self.eval_data_loader
-        )
+        self.train_data_loader = self._strategy.experimental_distribute_dataset(self.train_data_loader)
+        self.eval_data_loader = self._strategy.experimental_distribute_dataset(self.eval_data_loader)
         with self._strategy.scope():
             self.create_checkpoint_manager(saved_path=saved_path, max_to_keep=10000)
             if len(resume) > 1:
@@ -683,7 +597,12 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
     """Customized trainer module for Seq2Seq TTS training (Tacotron, FastSpeech)."""
 
     def __init__(
-        self, steps, epochs, config, strategy, is_mixed_precision=False,
+        self,
+        steps,
+        epochs,
+        config,
+        strategy,
+        is_mixed_precision=False,
     ):
         """Initialize trainer.
 
@@ -725,9 +644,7 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         """Set optimizer (MUST)."""
         self._optimizer = optimizer
         if self._is_mixed_precision:
-            self._optimizer = tf.keras.mixed_precision.experimental.LossScaleOptimizer(
-                self._optimizer, "dynamic"
-            )
+            self._optimizer = tf.keras.mixed_precision.LossScaleOptimizer(self._optimizer)
 
     def get_optimizer(self):
         """Get optimizer."""
@@ -744,11 +661,7 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
     def _train_vars(self):
         if self.config["var_train_expr"]:
             list_train_var = self.config["var_train_expr"].split("|")
-            return [
-                v
-                for v in self._model.trainable_variables
-                if self._check_string_exist(list_train_var, v.name)
-            ]
+            return [v for v in self._model.trainable_variables if self._check_string_exist(list_train_var, v.name)]
         return self._model.trainable_variables
 
     def _check_string_exist(self, list_string, inp_string):
@@ -767,15 +680,9 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         if self._already_apply_input_signature is False:
             train_element_signature = self._get_train_element_signature()
             eval_element_signature = self._get_eval_element_signature()
-            self.one_step_forward = tf.function(
-                self._one_step_forward, input_signature=[train_element_signature]
-            )
-            self.one_step_evaluate = tf.function(
-                self._one_step_evaluate, input_signature=[eval_element_signature]
-            )
-            self.one_step_predict = tf.function(
-                self._one_step_predict, input_signature=[eval_element_signature]
-            )
+            self.one_step_forward = tf.function(self._one_step_forward, input_signature=[train_element_signature])
+            self.one_step_evaluate = tf.function(self._one_step_evaluate, input_signature=[eval_element_signature])
+            self.one_step_predict = tf.function(self._one_step_predict, input_signature=[eval_element_signature])
             self._already_apply_input_signature = True
 
         # run one_step_forward
@@ -787,18 +694,12 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         self._check_train_finish()
 
     def _one_step_forward(self, batch):
-        per_replica_losses = self._strategy.run(
-            self._one_step_forward_per_replica, args=(batch,)
-        )
-        return self._strategy.reduce(
-            tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None
-        )
+        per_replica_losses = self._strategy.run(self._one_step_forward_per_replica, args=(batch,))
+        return self._strategy.reduce(tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None)
 
     def _calculate_gradient_per_batch(self, batch):
         outputs = self._model(**batch, training=True)
-        per_example_losses, dict_metrics_losses = self.compute_per_example_losses(
-            batch, outputs
-        )
+        per_example_losses, dict_metrics_losses = self.compute_per_example_losses(batch, outputs)
         per_replica_losses = tf.nn.compute_average_loss(
             per_example_losses,
             global_batch_size=self.config["batch_size"]
@@ -807,14 +708,10 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         )
 
         if self._is_mixed_precision:
-            scaled_per_replica_losses = self._optimizer.get_scaled_loss(
-                per_replica_losses
-            )
+            scaled_per_replica_losses = self._optimizer.get_scaled_loss(per_replica_losses)
 
         if self._is_mixed_precision:
-            scaled_gradients = tf.gradients(
-                scaled_per_replica_losses, self._trainable_variables
-            )
+            scaled_gradients = tf.gradients(scaled_per_replica_losses, self._trainable_variables)
             gradients = self._optimizer.get_unscaled_gradients(scaled_gradients)
         else:
             gradients = tf.gradients(per_replica_losses, self._trainable_variables)
@@ -834,20 +731,13 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
     def _one_step_forward_per_replica(self, batch):
         if self.config["gradient_accumulation_steps"] == 1:
             gradients, per_replica_losses = self._calculate_gradient_per_batch(batch)
-            self._optimizer.apply_gradients(
-                zip(gradients, self._trainable_variables), 1.0
-            )
+            self._optimizer.apply_gradients(zip(gradients, self._trainable_variables))
         else:
             # gradient acummulation here.
             per_replica_losses = 0.0
             for i in tf.range(self.config["gradient_accumulation_steps"]):
                 reduced_batch = {
-                    k: v[
-                        i
-                        * self.config["batch_size"] : (i + 1)
-                        * self.config["batch_size"]
-                    ]
-                    for k, v in batch.items()
+                    k: v[i * self.config["batch_size"] : (i + 1) * self.config["batch_size"]] for k, v in batch.items()
                 }
 
                 # run 1 step accumulate
@@ -857,24 +747,21 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
                 per_replica_losses += reduced_batch_losses
 
             gradients = self._gradient_accumulator.gradients
-            self._optimizer.apply_gradients(
-                zip(gradients, self._trainable_variables), 1.0
-            )
+            self._optimizer.apply_gradients(zip(gradients, self._trainable_variables))
             self._gradient_accumulator.reset()
 
         return per_replica_losses
 
-
     @abc.abstractmethod
     def compute_per_example_losses(self, batch, outputs):
         """Compute per example losses and return dict_metrics_losses
-        Note that all element of the loss MUST has a shape [batch_size] and 
+        Note that all element of the loss MUST has a shape [batch_size] and
         the keys of dict_metrics_losses MUST be in self.list_metrics_name.
 
         Args:
             batch: dictionary batch input return from dataloader
             outputs: outputs of the model
-        
+
         Returns:
             per_example_losses: per example losses for each GPU, shape [B]
             dict_metrics_losses: dictionary loss.
@@ -888,9 +775,7 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         logging.info(f"(Steps: {self.steps}) Start evaluation.")
 
         # calculate loss for each batch
-        for eval_steps_per_epoch, batch in enumerate(
-            tqdm(self.eval_data_loader, desc="[eval]"), 1
-        ):
+        for eval_steps_per_epoch, batch in enumerate(tqdm(self.eval_data_loader, desc="[eval]"), 1):
             # eval one step
             self.one_step_evaluate(batch)
 
@@ -898,16 +783,11 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
                 # save intermedia
                 self.generate_and_save_intermediate_result(batch)
 
-        logging.info(
-            f"(Steps: {self.steps}) Finished evaluation "
-            f"({eval_steps_per_epoch} steps per epoch)."
-        )
+        logging.info(f"(Steps: {self.steps}) Finished evaluation " f"({eval_steps_per_epoch} steps per epoch).")
 
         # average loss
         for key in self.eval_metrics.keys():
-            logging.info(
-                f"(Steps: {self.steps}) eval_{key} = {self.eval_metrics[key].result():.4f}."
-            )
+            logging.info(f"(Steps: {self.steps}) eval_{key} = {self.eval_metrics[key].result():.4f}.")
 
         # record
         self._write_to_tensorboard(self.eval_metrics, stage="eval")
@@ -944,22 +824,15 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         os.makedirs(saved_path, exist_ok=True)
 
         self.saved_path = saved_path
-        self.ckpt = tf.train.Checkpoint(
-            steps=tf.Variable(1), epochs=tf.Variable(1), optimizer=self.get_optimizer()
-        )
-        self.ckp_manager = tf.train.CheckpointManager(
-            self.ckpt, saved_path, max_to_keep=max_to_keep
-        )
+        self.ckpt = tf.train.Checkpoint(steps=tf.Variable(1), epochs=tf.Variable(1), optimizer=self.get_optimizer())
+        self.ckp_manager = tf.train.CheckpointManager(self.ckpt, saved_path, max_to_keep=max_to_keep)
 
     def save_checkpoint(self):
         """Save checkpoint."""
         self.ckpt.steps.assign(self.steps)
         self.ckpt.epochs.assign(self.epochs)
         self.ckp_manager.save(checkpoint_number=self.steps)
-        utils.save_weights(
-            self._model,
-            self.saved_path + "model-{}.h5".format(self.steps)
-        )
+        utils.save_weights(self._model, self.saved_path + "model-{}.h5".format(self.steps))
 
     def load_checkpoint(self, pretrained_path):
         """Load checkpoint."""
@@ -971,10 +844,7 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
         self._optimizer.iterations.assign(tf.cast(self.steps, tf.int64))
 
         # load weights.
-        utils.load_weights(
-            self._model,
-            self.saved_path + "model-{}.h5".format(self.steps)
-        )
+        utils.load_weights(self._model, self.saved_path + "model-{}.h5".format(self.steps))
 
     def _check_train_finish(self):
         """Check training finished."""
@@ -996,12 +866,8 @@ class Seq2SeqBasedTrainer(BasedTrainer, metaclass=abc.ABCMeta):
     def fit(self, train_data_loader, valid_data_loader, saved_path, resume=None):
         self.set_train_data_loader(train_data_loader)
         self.set_eval_data_loader(valid_data_loader)
-        self.train_data_loader = self._strategy.experimental_distribute_dataset(
-            self.train_data_loader
-        )
-        self.eval_data_loader = self._strategy.experimental_distribute_dataset(
-            self.eval_data_loader
-        )
+        self.train_data_loader = self._strategy.experimental_distribute_dataset(self.train_data_loader)
+        self.eval_data_loader = self._strategy.experimental_distribute_dataset(self.eval_data_loader)
         with self._strategy.scope():
             self.create_checkpoint_manager(saved_path=saved_path, max_to_keep=10000)
             if len(resume) > 1:

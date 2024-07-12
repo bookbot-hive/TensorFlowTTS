@@ -31,7 +31,6 @@ import os
 import numpy as np
 import soundfile as sf
 import yaml
-from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
 import tensorflow_tts
 from TensorFlowTTS.examples.melgan.audio_mel_dataset import AudioMelDataset

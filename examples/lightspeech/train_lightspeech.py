@@ -405,15 +405,15 @@ def main():
             ),
         )
 
-        optimizer = AdamWeightDecay(
+        optimizer = tf.keras.optimizers.AdamW(
             learning_rate=learning_rate_fn,
-            weight_decay_rate=config["optimizer_params"]["weight_decay"],
+            weight_decay=config["optimizer_params"]["weight_decay"],
             beta_1=0.9,
             beta_2=0.98,
             epsilon=1e-6,
-            exclude_from_weight_decay=["LayerNorm", "layer_norm", "bias"],
+            clipnorm=1.0,
         )
-
+        optimizer.exclude_from_weight_decay(var_names=["LayerNorm", "layer_norm", "bias"])
         _ = optimizer.iterations
 
     # compile trainer

@@ -19,7 +19,7 @@
 
 import numpy as np
 import tensorflow as tf
-from scipy.signal import kaiser
+from scipy.signal.windows import kaiser
 
 from tensorflow_tts.models import BaseModel
 from tensorflow_tts.models import TFMelGANGenerator

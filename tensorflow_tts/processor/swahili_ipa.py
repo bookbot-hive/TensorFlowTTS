@@ -46,6 +46,7 @@ valid_symbols = [
     "x",
     "z",
     "ð",
+    "ŋ",
     "ɑ",
     "ɓ",
     "ɔ",
@@ -142,7 +143,21 @@ class SwahiliIPAProcessor(BaseProcessor):
                 if word.is_major_break or word.is_minor_break:
                     phn_arr += [word.text]
                 elif word.phonemes:
-                    phn_arr += word.phonemes
+                    phonemes = word.phonemes[:]
+
+                    # NOTE: gruut doesn't handle "ng'" /ŋ/
+                    # we need to fix e.g. ng'ombe -> /ŋombe/ instead of /ᵑgombe/
+                    NG_GRAPHEME = "ng'"
+                    NG_PRENASALIZED_PHONEME = "ᵑg"
+                    NG_PHONEME = "ŋ"
+                    if NG_GRAPHEME in word.text and NG_PHONEME in valid_symbols:
+                        ng_graphemes = re.findall(f"{NG_GRAPHEME}?", word.text)
+                        ng_phonemes_idx = [i for i, p in enumerate(phonemes) if p == NG_PRENASALIZED_PHONEME]
+                        assert len(ng_graphemes) == len(ng_phonemes_idx)
+                        for i, g in zip(ng_phonemes_idx, ng_graphemes):
+                            phonemes[i] = NG_PHONEME if g == NG_GRAPHEME else phonemes[i]
+
+                    phn_arr += phonemes
 
         return self.clean_g2p(phn_arr)
 

@@ -8,10 +8,7 @@ import pip
 from setuptools import find_packages, setup
 
 if LooseVersion(sys.version) < LooseVersion("3.6"):
-    raise RuntimeError(
-        "TensorFlow TTS requires python >= 3.6, "
-        "but your Python version is {}".format(sys.version)
-    )
+    raise RuntimeError("TensorFlow TTS requires python >= 3.6, " "but your Python version is {}".format(sys.version))
 
 if LooseVersion(pip.__version__) < LooseVersion("19"):
     raise RuntimeError(
@@ -22,8 +19,8 @@ if LooseVersion(pip.__version__) < LooseVersion("19"):
 # TODO(@dathudeptrai) update requirement if needed.
 requirements = {
     "install": [
-        # "tensorflow-gpu==2.7.0",
-        "tensorflow-addons==0.10.0",
+        "tensorflow==2.12.0",
+        "tensorflow-addons>=0.10.0",
         "setuptools>=38.5.1",
         "huggingface_hub",
         "librosa>=0.7.0",
@@ -70,9 +67,7 @@ entry_points = {
 install_requires = requirements["install"]
 setup_requires = requirements["setup"]
 tests_require = requirements["test"]
-extras_require = {
-    k: v for k, v in requirements.items() if k not in ["install", "setup"]
-}
+extras_require = {k: v for k, v in requirements.items() if k not in ["install", "setup"]}
 
 dirname = os.path.dirname(__file__)
 setup(
