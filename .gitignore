@@ -1,4 +1,7 @@
 *.tflite
+*.onnx
+*.ort
+notebooks/*.wav
 notebooks/fastspeech2/
 notebooks/mbmelgan/
 # general

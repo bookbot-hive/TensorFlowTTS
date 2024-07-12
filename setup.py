@@ -44,6 +44,8 @@ requirements = {
         "pyopenjtalk>=0.1.3",
         "babygruut",
         "g2p_id_py==0.3.2",
+        "onnx==1.16.1",
+        "tf2onnx==1.16.1",
     ],
     "setup": [
         "numpy",
